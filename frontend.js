@@ -30,6 +30,10 @@ document.addEventListener("DOMContentLoaded", async function(){
             if (isUnderNightClubCategory && isInSG(lat, lng)) {
                 marker.addTo(searchResultLayer);
             }
+            marker.bindPopup(`<h1>${r.name}<\h1>`)
+            marker.addEventListener('click', function(){
+                map.flyTo(coordinate, 16);
+            })
         }
     } 
 
