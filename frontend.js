@@ -1,21 +1,45 @@
-async function loadRecreation(){
-    const response = await axios.get();
-}
+const singapore = [1.3521, 103.8198]
+
 document.addEventListener("DOMContentLoaded", async function(){
-    const mapObject = L.map("map");
-    mapObject.setView([1.3521, 103.8198], 13)
-    L.tileLayer('https://{s}.tile.jawg.io/jawg-matrix/{z}/{x}/{y}{r}.png?access-token={accessToken}', {
-        attribution: '<a href="http://jawg.io" title="Tiles Courtesy of Jawg Maps" target="_blank">&copy; <b>Jawg</b>Maps</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-        minZoom: 0,
-        maxZoom: 22,
-        subdomains: 'abcd',
-        accessToken: 'kpWYzvRLkzuDJkOjWV34GNVHiyA9wKZOgt8r5LzmMIVfgqFGVsPJnjJTjKqrvEGV'
-    }).addTo(mapObject);
+    const map = initMap();
 
-    const recreation = await loadRecreation();
-    const recreationLayer = L.marker()
-    recreationLayer.addTo(mapObject);
+    const searchResultLayer = L.layerGroup();
+    searchResultLayer.addTo(map);
 
+    setupEventHandlers();
+
+    function setupEventHandlers(){
+        document.querySelector("#search-btn").addEventListener('click', async function(){
+            const searchTerms = document.querySelector("#search-terms").value;
+            const centerOfMap = map.getBounds().getCenter();
+            const results = await find(searchTerms, centerOfMap.lat, centerOfMap.lng, 10000);
+            displaySearchResults(results);
+        })
+    }
+
+   
+
+    function displaySearchResults(results) {
+        
+        for (let r of results.results) {
+            const lat = r.geocodes.main.latitude;
+            const lng = r.geocodes.main.longitude;
+            const coordinate = [lat, lng];
+            const marker = L.marker(coordinate);
+            const isUnderNightClubCategory = r.categories.some(category => category.id === 10032);
+            if (isUnderNightClubCategory && isInSG(lat, lng)) {
+                marker.addTo(searchResultLayer);
+            }
+        }
+    } 
+
+    function isInSG(lat, lng) {
+        const latMin = 1.22;
+        const latMax = 1.47;
+        const lngMin = 103.6;
+        const lngMax = 104.0;
     
+        return lat >= latMin && lat <= latMax && lng >= lngMin && lng <= lngMax;
+    }
 
 });

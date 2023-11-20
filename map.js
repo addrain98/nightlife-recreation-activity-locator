@@ -9,6 +9,7 @@ function initMap() {
         maxZoom: 22,
         subdomains: 'abcd',
         accessToken: 'kpWYzvRLkzuDJkOjWV34GNVHiyA9wKZOgt8r5LzmMIVfgqFGVsPJnjJTjKqrvEGV'
-    }).addTo(mapObject);
+    }).addTo(map);
+    
     return map;
 }
