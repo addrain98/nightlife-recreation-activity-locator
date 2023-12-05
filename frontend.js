@@ -1,7 +1,9 @@
 const singapore = [1.3521, 103.8198]
+let coordinate;
 
 document.addEventListener("DOMContentLoaded", async function(){
     const map = initMap();
+    
 
     const searchResultLayer = L.layerGroup();
     searchResultLayer.addTo(map);
@@ -22,14 +24,17 @@ document.addEventListener("DOMContentLoaded", async function(){
     function displaySearchResults(results) {
         for (let r of results.results) {
             const marker = addMarkerToMap(map,r);
-    
+            
                 const searchResultDiv = document.querySelector("#search-results");
                 const resultElement = document.createElement(`div`);
+                const lat = r.geocodes.main.latitude;
+                const lng = r.geocodes.main.longitude;
+                const location = [lat, lng];
                 resultElement.innerHTML = r.name;
                 searchResultDiv.appendChild(resultElement);
                 resultElement.classList.add("result-item");
                 resultElement.addEventListener("click", function(){
-                    map.flyTo(coordinate, 20);
+                    map.flyTo(location, 16);
                     marker.openPopup();
                 });
 
@@ -40,9 +45,9 @@ document.addEventListener("DOMContentLoaded", async function(){
 
     function addMarkerToMap(map,r){
         const lat = r.geocodes.main.latitude;
-            const lng = r.geocodes.main.longitude;
-            const coordinate = [lat, lng];
-            const marker = L.marker(coordinate);
+        const lng = r.geocodes.main.longitude;
+        coordinate = [lat, lng];
+        const marker = L.marker(coordinate);
     
     
         if (isNightClubCategory(r.categories) && isInSG(lat, lng)) {
@@ -51,6 +56,7 @@ document.addEventListener("DOMContentLoaded", async function(){
         marker.bindPopup(function(){
             const element = document.createElement('div');
             element.innerHTML = `<h1>${r.name}</h1>`
+            return element;
         });
 
         marker.addEventListener('click', function(){
