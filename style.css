@@ -10,10 +10,10 @@
   display:none;
 }
 
-#map-container.full{
-  display:block;
-  height: 100vh;
-  z-index: 1;
+#map-container.full {
+  height: 100%;
+  width:100%;
+
 }
 
 #search-container.visible {
@@ -31,7 +31,7 @@
 #map-container.shrink {
   display:block;
   flex-grow: 1;
-  width: 70vw;
+  width: 70%;
   margin-left: auto;
 }
 
