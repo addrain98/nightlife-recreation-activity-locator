@@ -1,18 +1,6 @@
-const API_KEY = {
-    'fsq3oup5rBr57qce1vJYCdwbnp2lm1aZ6kWu4DL93TyuG+E=':['nightclub', 'club'],
-    'fsq3kiOZiK5hbZtwsuW3JhMb0Pjgh6UrHtN1Dt9yu+PLD1o=':['supper', 'restuarant', 'food']
-}
-function getApiKeyFromSearchTerm(searchTerms) {
-    for (const [apiKey, terms] of Object.entries(API_KEY)){
-        if (terms.includes(searchTerms)){
-            return apiKey
-        }
-    }
+const NIGHTCLUB_KEY = 'fsq3oup5rBr57qce1vJYCdwbnp2lm1aZ6kWu4DL93TyuG+E='
 
-}
-async function find(searchTerms, lat, lng, radius = 10000) {
-
-    const apiKey = getApiKeyFromSearchTerm(searchTerms)
+async function findNightclubs(searchTerms, lat, lng, radius = 10000) {
 
     const response = await axios.get("https://api.foursquare.com/v3/places/search",{
        // check the FourSquare documentation (the Places API)
@@ -24,7 +12,7 @@ async function find(searchTerms, lat, lng, radius = 10000) {
         },
         headers: {
             accept: 'application/json',
-            Authorization: apiKey
+            Authorization: NIGHTCLUB_KEY
           }
     });
     return response.data;

@@ -3,10 +3,8 @@ let coordinate;
 
 document.addEventListener("DOMContentLoaded", async function(){
     const map = initMap();
-    
-
-    const searchResultLayer = L.layerGroup();
-    searchResultLayer.addTo(map);
+    const nightclubLayer = L.layerGroup().addTo(map);
+    const barLayer = L.layerGroup().addTo(map);
 
     setupEventHandlers();
 
@@ -14,16 +12,21 @@ document.addEventListener("DOMContentLoaded", async function(){
         document.querySelector("#search-btn").addEventListener('click', async function(){
             const searchTerms = document.querySelector("#search-terms").value;
             const centerOfMap = map.getBounds().getCenter();
-            const results = await find(searchTerms, centerOfMap.lat, centerOfMap.lng, 10000);
-            displaySearchResults(results);
+            const nightclubResults = await findNightclubs(searchTerms, centerOfMap.lat, centerOfMap.lng, 10000);
+            displaySearchResults(nightclubResults, nightclubLayer, 'nightclub');
+            const barResults =await findBars(searchTerms, centerOfMap.lat, centerOfMap.lng, 10000);
+            displaySearchResults(barResults, barLayer, 'bar');
         })
     }
 
    
 
-    function displaySearchResults(results) {
+    function displaySearchResults(results, layerGroup, type) {
+        layerGroup.clearLayers();
         for (let r of results.results) {
-            const marker = addMarkerToMap(map,r);
+            const marker = addMarkerToMap(map,r,type);
+            marker.addTo(layerGroup);
+
             
                 const searchResultDiv = document.querySelector("#search-results");
                 const resultElement = document.createElement(`div`);
@@ -51,8 +54,12 @@ document.addEventListener("DOMContentLoaded", async function(){
     
     
         if (isNightClubCategory(r.categories) && isInSG(lat, lng)) {
-            marker.addTo(searchResultLayer);
+            marker.addTo(nightclubLayer);
         }
+        else if (isBarCategory(r.categories)&& isInSG(lat, lng)) {
+            marker.addTo(barLayer);
+        }
+
         marker.bindPopup(function(){
             const element = document.createElement('div');
             element.innerHTML = `<h1>${r.name}</h1>`
@@ -74,6 +81,16 @@ document.addEventListener("DOMContentLoaded", async function(){
         }
         return false; 
     }
+
+    function isBarCategory(categories) {
+        for (let i = 0; i < categories.length; i++) {
+            if (categories[i].id === 13003) {
+                return true; 
+            }
+        }
+        return false; 
+    }
+
     function isInSG(lat, lng) {
         const latMin = 1.22;
         const latMax = 1.45;
