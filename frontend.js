@@ -5,11 +5,18 @@ document.addEventListener("DOMContentLoaded", async function(){
     const map = initMap();
     const nightclubLayer = L.layerGroup().addTo(map);
     const barLayer = L.layerGroup().addTo(map);
+    const searchContainer = document.getElementById('search-container');
+    const mapContainer = document.getElementById('map-container');
+
 
     setupEventHandlers();
 
     function setupEventHandlers(){
         document.querySelector("#search-btn").addEventListener('click', async function(){
+            searchContainer.classList.replace('hidden', 'visible');
+            mapContainer.classList.replace('full', 'shrink');
+            map.invalidateSize();
+
             const searchTerms = document.querySelector("#search-terms").value;
             const centerOfMap = map.getBounds().getCenter();
             const nightclubResults = await findNightclubs(searchTerms, centerOfMap.lat, centerOfMap.lng, 10000);
@@ -94,7 +101,7 @@ document.addEventListener("DOMContentLoaded", async function(){
 
     function isInSG(lat, lng) {
         const latMin = 1.22;
-        const latMax = 1.45;
+        const latMax = 1.47;
         const lngMin = 103.6;
         const lngMax = 104.0;
     
