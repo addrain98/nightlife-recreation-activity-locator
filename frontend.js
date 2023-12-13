@@ -18,7 +18,7 @@ document.addEventListener("DOMContentLoaded", async function(){
             displaySearchResults(barResults, barLayer, 'bar');
         })
     }
-    //yo
+    
 
    
 
