@@ -53,41 +53,41 @@
 
 #search-btn {
     position: absolute;
-    left: 200px;
-    top: 25px;
+    left: 700px;
+    top: 45px;
     z-index: 9999;
 }
 
 #search-terms {
   position: absolute;
-  left: 200px;
-  top: 25px;
+  left: 550px;
+  top: 45px;
   z-index: 9999;
 }
 
 .result-item {
-    display: block; /* Make each result a block element */
-    padding: 10px; /* Add some padding around the text */
-    margin-bottom: 10px; /* Add space between items */
-    background-color: #ffffff; /* Set a white background */
-    border: 1px solid #ddd; /* Add a light border */
-    border-radius: 4px; /* Round the corners */
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Add a subtle shadow */
-    transition: box-shadow 0.3s ease; /* Smooth transition for shadow */
-    cursor: pointer; /* Change the mouse cursor on hover */
+    display: block; 
+    padding: 10px; 
+    margin-bottom: 10px; 
+    background-color: #ffffff; 
+    border: 1px solid #ddd; 
+    border-radius: 4px; 
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1); 
+    transition: box-shadow 0.3s ease; 
+    cursor: pointer; 
   }
   
   .result-item:hover {
-    box-shadow: 0 4px 8px rgba(0,0,0,0.5); /* Darker shadow on hover */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.5); 
   }
   
   .result-item h1 {
-    font-size: 16px; /* Match the size to your design */
-    color: #333; /* Dark grey color for the text */
-    margin: 0; /* Remove default margins */
-    overflow: hidden; /* Ensure content doesn't overflow */
-    white-space: nowrap; /* No wrapping of text to new line */
-    text-overflow: ellipsis; /* Add ellipsis to overflowed text */
+    font-size: 16px; 
+    color: #333; 
+    margin: 0; 
+    overflow: hidden; 
+    white-space: nowrap; 
+    text-overflow: ellipsis; 
   }
 
   #search-results {
