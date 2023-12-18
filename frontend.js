@@ -31,12 +31,14 @@ document.addEventListener("DOMContentLoaded", async function(){
 
     function displaySearchResults(results, layerGroup, type) {
         layerGroup.clearLayers();
+        const searchResultDiv = document.querySelector("#search-results");
+        searchResultDiv.innerHTML = '';
         for (let r of results.results) {
             const marker = addMarkerToMap(map,r,type);
             marker.addTo(layerGroup);
 
             
-                const searchResultDiv = document.querySelector("#search-results");
+                
                 const resultElement = document.createElement(`div`);
                 const lat = r.geocodes.main.latitude;
                 const lng = r.geocodes.main.longitude;

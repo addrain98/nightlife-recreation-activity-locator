@@ -58,14 +58,14 @@ padding:0;
 
 #search-btn {
     position: absolute;
-    left: 700px;
+    left: 260px;
     top: 45px;
     z-index: 9999;
 }
 
 #search-terms {
   position: absolute;
-  left: 550px;
+  left: 90px;
   top: 45px;
   z-index: 9999;
 }
@@ -96,8 +96,8 @@ padding:0;
   }
 
   #search-results {
-    max-height: 500px;
+    max-height: 800px;
     overflow-y: scroll;
-    margin: 10px;
-    padding-left:10px;
+    margin-top: 75px;
+    padding:10px;
   }
