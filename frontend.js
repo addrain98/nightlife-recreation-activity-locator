@@ -59,7 +59,7 @@ document.addEventListener("DOMContentLoaded", async function(){
     function addMarkerToMap(map,r){
         const lat = r.geocodes.main.latitude;
         const lng = r.geocodes.main.longitude;
-        coordinate = [lat, lng];
+        const coordinate = [lat, lng];
         const marker = L.marker(coordinate);
     
     
