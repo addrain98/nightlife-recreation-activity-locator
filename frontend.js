@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded", async function(){
     setupEventHandlers();
 
     function setupEventHandlers(){
-        document.querySelector("#search-btn").addEventListener('click', async function(){
+        document.querySelector("#search-icon").addEventListener('click', async function(){
             searchContainer.classList.replace('hidden', 'visible');
             mapContainer.classList.replace('full', 'shrink');
             map.invalidateSize();
