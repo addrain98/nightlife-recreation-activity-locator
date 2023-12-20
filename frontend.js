@@ -72,21 +72,30 @@ document.addEventListener("DOMContentLoaded", async function(){
 
         marker.bindPopup(function(){
             const element = document.createElement('div');
-            element.innerHTML = `<h1>${r.name}</h1>`
+            element.classList.add('cards');
+            element.style.width = '18rem';
             async function loadPlacesPhoto() {
+                let photos = "";
                 if (isNightClubCategory(r.categories) && isInSG(lat, lng)) {
                     let responses = await loadNightclubPhoto(r.fsq_id);
-                    let firstPhoto = responses[0];
-                    console.log(firstPhoto);
-                    element.innerHTML += `<img src = "${firstPhoto.prefix}200x200${firstPhoto.suffix}"/>`;
+                    responses.forEach(photo => {
+                        photos += `<img class="card-img-top" src = "${photo.prefix}200x200${photo.suffix}" alt="Nightclub Photos"`
+                    })
                 }
 
                 else if (isBarCategory(r.categories)&& isInSG(lat, lng)) {
                     let responses = await loadBarPhoto(r.fsq_id);
-                    let firstPhoto = responses[0];
-                    console.log(firstPhoto);
-                    element.innerHTML += `<img src = "${firstPhoto.prefix}200x200${firstPhoto.suffix}"/>`;
+                    responses.forEach(photo => {
+                        photos += `<img class="card-img-top" src = "${photo.prefix}200x200${photo.suffix}" alt="Bar Photos"`
+                    })
                 }
+                element.innerHTML = `
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <h5 class="card-title">${r.name}</h5>
+                                            ${photoHtml}
+                                        </div>
+                                    </div>`;
 
             }
             loadPlacesPhoto();
