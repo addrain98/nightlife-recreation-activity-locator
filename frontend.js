@@ -67,12 +67,29 @@ document.addEventListener("DOMContentLoaded", async function(){
             marker.addTo(nightclubLayer);
         }
         else if (isBarCategory(r.categories)&& isInSG(lat, lng)) {
-            marker.addTo(barLayer);
+            marker.addTo(barLayer);  
         }
 
         marker.bindPopup(function(){
             const element = document.createElement('div');
             element.innerHTML = `<h1>${r.name}</h1>`
+            async function loadPlacesPhoto() {
+                if (isNightClubCategory(r.categories) && isInSG(lat, lng)) {
+                    let responses = await loadNightclubPhoto(r.fsq_id);
+                    let firstPhoto = responses[0];
+                    console.log(firstPhoto);
+                    element.innerHTML += `<img src = "${firstPhoto.prefix}200x200${firstPhoto.suffix}"`;
+                }
+
+                else if (isBarCategory(r.categories)&& isInSG(lat, lng)) {
+                    let responses = await loadBarPhoto(r.fsq_id);
+                    let firstPhoto = responses[0];
+                    console.log(firstPhoto);
+                    element.innerHTML += `<img src = "${firstPhoto.prefix}200x200${firstPhoto.suffix}"`;
+                }
+
+            }
+            loadPlacesPhoto();
             return element;
         });
 
