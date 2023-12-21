@@ -35,25 +35,19 @@ document.addEventListener("DOMContentLoaded", async function(){
         searchResultDiv.innerHTML = '';
         for (let r of results.results) {
             const marker = addMarkerToMap(map,r,type);
-            marker.addTo(layerGroup);
-
-            
-                
-                const resultElement = document.createElement(`div`);
-                const lat = r.geocodes.main.latitude;
-                const lng = r.geocodes.main.longitude;
-                const location = [lat, lng];
-                resultElement.innerHTML = r.name;
-                searchResultDiv.appendChild(resultElement);
-                resultElement.classList.add("result-item");
-                resultElement.addEventListener("click", function(){
-                    map.flyTo(location, 16);
-                    marker.openPopup();
-                });
-
-            
+            marker.addTo(layerGroup);   
+            const resultElement = document.createElement(`div`);
+            const lat = r.geocodes.main.latitude;
+            const lng = r.geocodes.main.longitude;
+            const location = [lat, lng];
+            resultElement.innerHTML = r.name;
+            searchResultDiv.appendChild(resultElement);
+            resultElement.classList.add("result-item");
+            resultElement.addEventListener("click", function(){
+                map.flyTo(location, 16);
+                marker.openPopup();
+            }); 
         }
-
     }
 
     function addMarkerToMap(map,r){
@@ -83,8 +77,8 @@ document.addEventListener("DOMContentLoaded", async function(){
             prevControl.classList.add('carousel-control-prev');
             prevControl.href = `#carousel${r.id}`;
             prevControl.setAttribute('role', 'button');
-            prevControl.setAttribute('data-slide', 'prev');
-            prevControl.innerHTML = '<span class="carousel-control-prev-icon" aria-hidden="true"></span><span class="sr-only">Previous</span>';
+            prevControl.setAttribute('data-bs-slide', 'prev'); 
+            prevControl.innerHTML = '<span class="carousel-control-prev-icon" aria-hidden="true"></span><span class="visually-hidden">Previous</span>';
             carousel.appendChild(prevControl);
 
             
@@ -92,8 +86,8 @@ document.addEventListener("DOMContentLoaded", async function(){
             nextControl.classList.add('carousel-control-next');
             nextControl.href = `#carousel${r.id}`;
             nextControl.setAttribute('role', 'button');
-            nextControl.setAttribute('data-slide', 'next');
-            nextControl.innerHTML = '<span class="carousel-control-next-icon" aria-hidden="true"></span><span class="sr-only">Next</span>';
+            nextControl.setAttribute('data-bs-slide', 'next'); 
+            nextControl.innerHTML = '<span class="carousel-control-next-icon" aria-hidden="true"></span><span class="visually-hidden">Next</span>';
             carousel.appendChild(nextControl);
 
             return carousel;
@@ -117,12 +111,11 @@ document.addEventListener("DOMContentLoaded", async function(){
         
                 const captionDiv = document.createElement('div');
                 captionDiv.classList.add('carousel-caption');
-                captionDiv.classList.add('d-none');
                 captionDiv.classList.add('d-md-block'); 
 
                 const title = document.createElement('h5');
                 title.textContent = r.name; 
-
+                console.log('Title set for:', r.name);
                 captionDiv.appendChild(title);
 
                 carouselItem.appendChild(img);
@@ -134,14 +127,15 @@ document.addEventListener("DOMContentLoaded", async function(){
             if (isNightClubCategory(r.categories) && isInSG(lat, lng)) {
                 let responses = await loadNightclubPhoto(r.fsq_id);
                 responses.forEach(photo => {
-                    const photoUrl = `${photo.prefix}150x150${photo.suffix}`;
+                    const photoUrl = `${photo.prefix}400x400${photo.suffix}`;
                     addPhotoToCarousel(photoUrl, 'NightClub Photo', 'The Title of NightClub Photo');
                 });
             }
             if (isBarCategory(r.categories) && isInSG(lat, lng)) {
                 let responses = await loadBarPhoto(r.fsq_id);
+                console.log(responses);
                 responses.forEach(photo => {
-                    const photoUrl = `${photo.prefix}150x150${photo.suffix}`;
+                    const photoUrl = `${photo.prefix}400x400${photo.suffix}`;
                     addPhotoToCarousel(photoUrl, 'Bar Photo', 'The Title of Bar Photo');
                 });
             }
@@ -153,11 +147,21 @@ document.addEventListener("DOMContentLoaded", async function(){
         marker.bindPopup(function() {
             const element = document.createElement('div');
             element.classList.add('carousel-container');
+            element.style.width = '200px'; 
+            element.style.minHeight = '100px';
             const carousel = createCarouselElement(r);
-        
-            loadPlacesPhoto(carousel, r).then(updatedCarousel => {
-                element.appendChild(updatedCarousel);
-            });
+            element.appendChild(carousel); 
+            loadPlacesPhoto(carousel, r).then(()=>{
+                let myCarouselElement = document.querySelector(`#carousel${r.id}`);
+                if (myCarouselElement) {
+                    let carouselInstance = new bootstrap.Carousel(myCarouselElement);
+                    carouselInstance.cycle();
+                } else {
+                    console.error('Carousel element not found');
+                }
+            }).catch(error => {
+                    console.error('Error loading photos:', error); 
+            })
         
             return element;
         });
