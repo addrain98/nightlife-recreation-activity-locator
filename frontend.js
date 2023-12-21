@@ -70,43 +70,91 @@ document.addEventListener("DOMContentLoaded", async function(){
             marker.addTo(barLayer);  
         }
 
-        marker.bindPopup(function(){
-            const element = document.createElement('div');
-            element.classList.add('cards');
-            element.style.width = '18rem';
-            async function loadPlacesPhoto() {
-                let photos = "";
-                if (isNightClubCategory(r.categories) && isInSG(lat, lng)) {
-                    let responses = await loadNightclubPhoto(r.fsq_id);
-                    responses.forEach(photo => {
-                        photos += `<img class="card-img-top" src = "${photo.prefix}200x200${photo.suffix}" alt="Nightclub Photos"`
-                    })
-                }
+        function createCarouselElement(r) {
+            const carousel = document.createElement('div');
+            carousel.id = `carousel${r.id}`
+            carousel.classList.add('carousel', 'slide');
 
-                else if (isBarCategory(r.categories)&& isInSG(lat, lng)) {
-                    let responses = await loadBarPhoto(r.fsq_id);
-                    responses.forEach(photo => {
-                        photos += `<img class="card-img-top" src = "${photo.prefix}200x200${photo.suffix}" alt="Bar Photos"`
-                    })
-                }
-                element.innerHTML = `
-                                    <div class="card">
-                                        <div class="card-body">
-                                            <h5 class="card-title">${r.name}</h5>
-                                            ${photoHtml}
-                                        </div>
-                                    </div>`;
+            const carouselInner = document.createElement('div');
+            carouselInner.classList.add('carousel-inner');
+            carousel.appendChild(carouselInner);
 
+            const prevControl = document.createElement('a');
+            prevControl.classList.add('carousel-control-prev');
+            prevControl.href = `#carousel${r.id}`;
+            prevControl.setAttribute('role', 'button');
+            prevControl.setAttribute('data-slide', 'prev');
+            prevControl.innerHTML = '<span class="carousel-control-prev-icon" aria-hidden="true"></span><span class="sr-only">Previous</span>';
+            carousel.appendChild(prevControl);
+
+            
+            const nextControl = document.createElement('a');
+            nextControl.classList.add('carousel-control-next');
+            nextControl.href = `#carousel${r.id}`;
+            nextControl.setAttribute('role', 'button');
+            nextControl.setAttribute('data-slide', 'next');
+            nextControl.innerHTML = '<span class="carousel-control-next-icon" aria-hidden="true"></span><span class="sr-only">Next</span>';
+            carousel.appendChild(nextControl);
+
+            return carousel;
+        }
+
+        async function loadPlacesPhoto(carousel, r) {
+            let isFirstItem = true;
+        
+            const addPhotoToCarousel = (photoUrl, altText) => {
+                const carouselItem = document.createElement('div');
+                carouselItem.classList.add('carousel-item');
+                if (isFirstItem) {
+                    carouselItem.classList.add('active');
+                    isFirstItem = false;
+                }
+        
+                const img = document.createElement('img');
+                img.classList.add('d-block', 'w-100');
+                img.src = photoUrl;
+                img.alt = altText;
+        
+                carouselItem.appendChild(img);
+                carousel.querySelector('.carousel-inner').appendChild(carouselItem);
+            };
+        
+            if (isNightClubCategory(r.categories) && isInSG(lat, lng)) {
+                let responses = await loadNightclubPhoto(r.fsq_id);
+                responses.forEach(photo => {
+                    const photoUrl = `${photo.prefix}150x150${photo.suffix}`;
+                    addPhotoToCarousel(photoUrl, 'NightClub Photo');
+                });
             }
-            loadPlacesPhoto();
+            if (isBarCategory(r.categories) && isInSG(lat, lng)) {
+                let responses = await loadBarPhoto(r.fsq_id);
+                responses.forEach(photo => {
+                    const photoUrl = `${photo.prefix}150x150${photo.suffix}`;
+                    addPhotoToCarousel(photoUrl, 'Bar Photo');
+                });
+            }
+        return carousel;
+    
+        }
+
+
+        marker.bindPopup(function() {
+            const element = document.createElement('div');
+            element.classList.add('carousel-container');
+            const carousel = createCarouselElement(r);
+        
+            loadPlacesPhoto(carousel, r).then(updatedCarousel => {
+                element.appendChild(updatedCarousel);
+            });
+        
             return element;
         });
-
-        marker.addEventListener('click', function(){
-            map.flyTo(coordinate, 16);
+        
+        marker.addEventListener('click', function() {
+            map.flyTo(coordinate, 15);
         });
-
-        return marker;    
+        
+        return marker;  
     }
 
     function isNightClubCategory(categories) {
