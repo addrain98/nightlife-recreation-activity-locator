@@ -115,7 +115,19 @@ document.addEventListener("DOMContentLoaded", async function(){
                 img.src = photoUrl;
                 img.alt = altText;
         
+                const captionDiv = document.createElement('div');
+                captionDiv.classList.add('carousel-caption');
+                captionDiv.classList.add('d-none');
+                captionDiv.classList.add('d-md-block'); 
+
+                const title = document.createElement('h5');
+                title.textContent = r.name; 
+
+                captionDiv.appendChild(title);
+
                 carouselItem.appendChild(img);
+                carouselItem.appendChild(captionDiv);
+
                 carousel.querySelector('.carousel-inner').appendChild(carouselItem);
             };
         
@@ -123,14 +135,14 @@ document.addEventListener("DOMContentLoaded", async function(){
                 let responses = await loadNightclubPhoto(r.fsq_id);
                 responses.forEach(photo => {
                     const photoUrl = `${photo.prefix}150x150${photo.suffix}`;
-                    addPhotoToCarousel(photoUrl, 'NightClub Photo');
+                    addPhotoToCarousel(photoUrl, 'NightClub Photo', 'The Title of NightClub Photo');
                 });
             }
             if (isBarCategory(r.categories) && isInSG(lat, lng)) {
                 let responses = await loadBarPhoto(r.fsq_id);
                 responses.forEach(photo => {
                     const photoUrl = `${photo.prefix}150x150${photo.suffix}`;
-                    addPhotoToCarousel(photoUrl, 'Bar Photo');
+                    addPhotoToCarousel(photoUrl, 'Bar Photo', 'The Title of Bar Photo');
                 });
             }
         return carousel;
