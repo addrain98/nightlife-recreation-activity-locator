@@ -66,7 +66,7 @@ document.addEventListener("DOMContentLoaded", async function(){
 
         function createCarouselElement(r) {
             const carousel = document.createElement('div');
-            carousel.id = `carousel${r.id}`
+            carousel.id = `carousel${r.fsq_id}`
             carousel.classList.add('carousel', 'slide');
 
             const carouselInner = document.createElement('div');
@@ -75,7 +75,7 @@ document.addEventListener("DOMContentLoaded", async function(){
 
             const prevControl = document.createElement('a');
             prevControl.classList.add('carousel-control-prev');
-            prevControl.href = `#carousel${r.id}`;
+            prevControl.href = `#carousel${r.fsq_id}`;
             prevControl.setAttribute('role', 'button');
             prevControl.setAttribute('data-bs-slide', 'prev'); 
             prevControl.innerHTML = '<span class="carousel-control-prev-icon" aria-hidden="true"></span><span class="visually-hidden">Previous</span>';
@@ -84,7 +84,7 @@ document.addEventListener("DOMContentLoaded", async function(){
             
             const nextControl = document.createElement('a');
             nextControl.classList.add('carousel-control-next');
-            nextControl.href = `#carousel${r.id}`;
+            nextControl.href = `#carousel${r.fsq_id}`;
             nextControl.setAttribute('role', 'button');
             nextControl.setAttribute('data-bs-slide', 'next'); 
             nextControl.innerHTML = '<span class="carousel-control-next-icon" aria-hidden="true"></span><span class="visually-hidden">Next</span>';
@@ -150,9 +150,10 @@ document.addEventListener("DOMContentLoaded", async function(){
             element.style.width = '200px'; 
             element.style.minHeight = '100px';
             const carousel = createCarouselElement(r);
+            console.log(carousel);
             element.appendChild(carousel); 
             loadPlacesPhoto(carousel, r).then(()=>{
-                let myCarouselElement = document.querySelector(`#carousel${r.id}`);
+                let myCarouselElement = element.querySelector(`#carousel${r.fsq_id}`);
                 if (myCarouselElement) {
                     let carouselInstance = new bootstrap.Carousel(myCarouselElement);
                     carouselInstance.cycle();
