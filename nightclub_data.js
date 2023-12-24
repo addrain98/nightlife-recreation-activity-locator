@@ -18,8 +18,8 @@ async function findNightclubs(searchTerms, lat, lng, radius = 10000) {
     return response.data;
 }
 
-async function loadNightclubPhoto(fsqId) {
-    const response = await axios.get(`https://api.foursquare.com/v3/places/${fsqId}/photos`, {
+async function loadNightclubPhoto(fsq_id) {
+    const response = await axios.get(`https://api.foursquare.com/v3/places/${fsq_id}/photos`, {
         headers: {
             accept: 'application/json',
             Authorization: NIGHTCLUB_KEY

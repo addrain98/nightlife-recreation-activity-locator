@@ -65,6 +65,7 @@ document.addEventListener("DOMContentLoaded", async function(){
         }
 
         function createCarouselElement(r) {
+
             const carousel = document.createElement('div');
             carousel.id = `carousel${r.fsq_id}`
             carousel.classList.add('carousel', 'slide');
@@ -109,35 +110,50 @@ document.addEventListener("DOMContentLoaded", async function(){
                 img.src = photoUrl;
                 img.alt = altText;
         
-                const captionDiv = document.createElement('div');
-                captionDiv.classList.add('carousel-caption');
-                captionDiv.classList.add('d-md-block'); 
-
-                const title = document.createElement('h5');
-                title.textContent = r.name; 
-                console.log('Title set for:', r.name);
-                captionDiv.appendChild(title);
-
                 carouselItem.appendChild(img);
-                carouselItem.appendChild(captionDiv);
-
                 carousel.querySelector('.carousel-inner').appendChild(carouselItem);
             };
-        
+            
             if (isNightClubCategory(r.categories) && isInSG(lat, lng)) {
+                
                 let responses = await loadNightclubPhoto(r.fsq_id);
-                responses.forEach(photo => {
-                    const photoUrl = `${photo.prefix}400x400${photo.suffix}`;
-                    addPhotoToCarousel(photoUrl, 'NightClub Photo', 'The Title of NightClub Photo');
-                });
+                
+               if (responses.length == 0) {
+                    const noPhotosItem = document.createElement('div');
+                    noPhotosItem.classList.add('carousel-item', 'active');
+                    const noPhotosText = document.createElement('p');
+                    noPhotosText.textContent = 'Photos unavailable';
+                    noPhotosText.classList.add('no-photos-message'); 
+                    noPhotosItem.appendChild(noPhotosText);
+                    carousel.querySelector('.carousel-inner').appendChild(noPhotosItem);
+                }
+                else {
+                    responses.forEach(photo => {
+                        console.log("Processing photo:", photo);
+                        const photoUrl = `${photo.prefix}400x400${photo.suffix}`;
+                        addPhotoToCarousel(photoUrl, 'NightClub Photo', 'The Title of NightClub Photo');
+                    });
+                }
+                  
             }
             if (isBarCategory(r.categories) && isInSG(lat, lng)) {
                 let responses = await loadBarPhoto(r.fsq_id);
-                console.log(responses);
-                responses.forEach(photo => {
-                    const photoUrl = `${photo.prefix}400x400${photo.suffix}`;
-                    addPhotoToCarousel(photoUrl, 'Bar Photo', 'The Title of Bar Photo');
-                });
+                if (responses.length == 0) {
+                    const noPhotosItem = document.createElement('div');
+                    noPhotosItem.classList.add('carousel-item', 'active');
+                    const noPhotosText = document.createElement('p');
+                    noPhotosText.textContent = 'Photos unavailable';
+                    noPhotosText.classList.add('no-photos-message'); 
+                    noPhotosItem.appendChild(noPhotosText);
+                    carousel.querySelector('.carousel-inner').appendChild(noPhotosItem);
+                }
+                else{
+                    responses.forEach(photo => {
+                        console.log("Processing photo:", photo);
+                        const photoUrl = `${photo.prefix}400x400${photo.suffix}`;
+                        addPhotoToCarousel(photoUrl, 'Bar Photo', 'The Title of Bar Photo');
+                    });
+                }
             }
         return carousel;
     
@@ -147,11 +163,15 @@ document.addEventListener("DOMContentLoaded", async function(){
         marker.bindPopup(function() {
             const element = document.createElement('div');
             element.classList.add('carousel-container');
-            element.style.width = '200px'; 
-            element.style.minHeight = '100px';
             const carousel = createCarouselElement(r);
             console.log(carousel);
             element.appendChild(carousel); 
+
+            const title = document.createElement('h5');
+            title.textContent = r.name;
+            title.classList.add('carousel-title'); 
+            element.appendChild(title);
+
             loadPlacesPhoto(carousel, r).then(()=>{
                 let myCarouselElement = element.querySelector(`#carousel${r.fsq_id}`);
                 if (myCarouselElement) {
@@ -185,7 +205,7 @@ document.addEventListener("DOMContentLoaded", async function(){
 
     function isBarCategory(categories) {
         for (let i = 0; i < categories.length; i++) {
-            if (categories[i].id === 13003) {
+            if (categories[i].id >= 13003 && categories[i].id <= 13025) {
                 return true; 
             }
         }

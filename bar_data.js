@@ -18,8 +18,8 @@ async function findBars(searchTerms, lat, lng, radius = 10000) {
     return response.data;
 }
 
-async function loadBarPhoto(fsqId) {
-    const response = await axios.get(`https://api.foursquare.com/v3/places/${fsqId}/photos`, {
+async function loadBarPhoto(fsq_id) {
+    const response = await axios.get(`https://api.foursquare.com/v3/places/${fsq_id}/photos`, {
         headers: {
             accept: 'application/json',
             Authorization: BAR_KEY
