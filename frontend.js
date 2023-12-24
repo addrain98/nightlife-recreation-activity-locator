@@ -33,14 +33,26 @@ document.addEventListener("DOMContentLoaded", async function(){
         layerGroup.clearLayers();
         const searchResultDiv = document.querySelector("#search-results");
         searchResultDiv.innerHTML = '';
+
         for (let r of results.results) {
             const marker = addMarkerToMap(map,r,type);
             marker.addTo(layerGroup);   
+
             const resultElement = document.createElement(`div`);
             const lat = r.geocodes.main.latitude;
             const lng = r.geocodes.main.longitude;
             const location = [lat, lng];
-            resultElement.innerHTML = r.name;
+
+            const imageContainer = document.createElement('div');
+            imageContainer.classList.add('image-container');
+            resultElement.appendChild(imageContainer);
+
+            updateImageContainer(imageContainer, r);
+            
+            const nameElement = document.createElement('div');
+            nameElement.textContent = r.name;
+            resultElement.appendChild(nameElement);
+            
             searchResultDiv.appendChild(resultElement);
             resultElement.classList.add("result-item");
             resultElement.addEventListener("click", function(){
@@ -49,6 +61,29 @@ document.addEventListener("DOMContentLoaded", async function(){
             }); 
         }
     }
+
+    async function updateImageContainer(imageContainer, r) {
+        let photo = [];
+        if (isNightClubCategory(r.categories)) {
+            photo = await loadNightclubPhoto(r.fsq_id);
+        } else if (isBarCategory(r.categories)) {
+            photo = await loadBarPhoto(r.fsq_id);
+        }
+        if (photo.length > 0) {
+            const firstPhoto = photo[0];
+            const imageUrl = `${firstPhoto.prefix}100x100${firstPhoto.suffix}`
+            console.log("Loading image:",r.name, imageUrl);
+            const img = document.createElement('img');
+            img.src = `${firstPhoto.prefix}100x100${firstPhoto.suffix}`;
+            img.alt = 'Photo';
+            img.classList.add('result-image');
+            imageContainer.appendChild(img);
+        }
+        else {
+            console.log('No photos available for ' +r.name+ r.fsq_id);
+        }
+    }
+
 
     function addMarkerToMap(map,r){
         const lat = r.geocodes.main.latitude;
