@@ -167,10 +167,21 @@ document.addEventListener("DOMContentLoaded", async function(){
             console.log(carousel);
             element.appendChild(carousel); 
 
+
             const title = document.createElement('h5');
             title.textContent = r.name;
             title.classList.add('carousel-title'); 
             element.appendChild(title);
+
+            const location = document.createElement('p');
+            location.textContent = r.location.formatted_address;
+            location.classList.add('carousel-location'); 
+            element.appendChild(location);
+
+            const openingHours = document.createElement('p');
+            openingHours.textContent = r.closed_bucket;
+            openingHours.classList.add('carousel-opening-hours'); 
+            element.appendChild(openingHours);
 
             loadPlacesPhoto(carousel, r).then(()=>{
                 let myCarouselElement = element.querySelector(`#carousel${r.fsq_id}`);
@@ -188,7 +199,7 @@ document.addEventListener("DOMContentLoaded", async function(){
         });
         
         marker.addEventListener('click', function() {
-            map.flyTo(coordinate, 15);
+            map.flyTo(coordinate, 13);
         });
         
         return marker;  
