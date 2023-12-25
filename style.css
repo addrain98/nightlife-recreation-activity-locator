@@ -36,6 +36,7 @@ padding:0;
 
 #search-container.visible {
   display: block;
+  position: relative;
   flex: 0 0 30vw;
   height:100vh;
   background-color: rgba(255,255,255,0.5);
