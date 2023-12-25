@@ -7,6 +7,7 @@ document.addEventListener("DOMContentLoaded", async function(){
     const barLayer = L.layerGroup().addTo(map);
     const searchContainer = document.getElementById('search-container');
     const mapContainer = document.getElementById('map-container');
+   
 
 
     setupEventHandlers();
@@ -19,11 +20,21 @@ document.addEventListener("DOMContentLoaded", async function(){
 
             const searchTerms = document.querySelector("#search-terms").value;
             const centerOfMap = map.getBounds().getCenter();
-            const nightclubResults = await findNightclubs(searchTerms, centerOfMap.lat, centerOfMap.lng, 10000);
+            const nightclubResults = await findNightclubs(searchTerms, centerOfMap.lat, centerOfMap.lng, 10000, categoryIDs);
             displaySearchResults(nightclubResults, nightclubLayer, 'nightclub');
-            const barResults =await findBars(searchTerms, centerOfMap.lat, centerOfMap.lng, 10000);
+            const barResults =await findBars(searchTerms, centerOfMap.lat, centerOfMap.lng, 10000, categoryString);
             displaySearchResults(barResults, barLayer, 'bar');
         })
+
+        document.querySelector("#close-btn").addEventListener('click',function(){
+            searchContainer.classList.replace('visible','hidden');
+            mapContainer.classList.replace('shrink', 'full');
+            map.invalidateSize();
+            document.querySelector("#search-terms").value = '';
+            nightclubLayer.clearLayers();
+            barLayer.clearLayers();
+        })
+
     }
     
 
