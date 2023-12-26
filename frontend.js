@@ -69,8 +69,46 @@ document.addEventListener("DOMContentLoaded", async function(){
             resultElement.addEventListener("click", function(){
                 map.flyTo(location, 16);
                 marker.openPopup();
+
+                saveToRecentSearches(r);
+                displayRecentSearches();
             }); 
         }
+    }
+
+    function saveToRecentSearches(result) {
+        let recentSearches = JSON.parse(localStorage.getItem('recentSearches')) || [];
+        recentSearches.push(result);
+        localStorage.setItem('recentSearches', JSON.stringify(recentSearches));
+    }
+
+    function displayRecentSearches() {
+        let recentSearches = JSON.parse(localStorage.getItem('recentSearches')) || [];
+        const recentSearchContainer = document.getElementById('recent-search-container')
+        recentSearchContainer.innerHTML = '';
+
+        recentSearches.forEach((searchItem) => {
+            const itemDiv = document.createElement('div');
+            itemDiv.className = 'recent-search-image';
+
+            const itemImage = document.createElement('div');
+            itemImage.classList.add('recent-item-container');
+            updateItemImage(itemImage, searchItem);
+
+            const itemName = document.createElement('div');
+            itemName.className = 'recent-search-name';
+            itemName.textContent = searchItem.name;
+
+            itemDiv.appendChild(itemImage);
+            itemDiv.appendChild(itemName);
+
+            recentSearchContainer.appendChild(itemDiv);
+
+            itemDiv.addEventListener('click', () => {
+                map.flyTo(location, 16);
+                marker.openPopup();
+            })
+        })
     }
 
     async function updateImageContainer(imageContainer, r) {
@@ -95,6 +133,33 @@ document.addEventListener("DOMContentLoaded", async function(){
         }
     }
 
+    async function updateItemImage(itemImage, searchItem) {
+    
+        if (!searchItem || !searchItem.fsq_id || !searchItem.name) {
+            console.error('Invalid search item:', searchItem);
+            return; // Exit the function if the search item is not valid
+        }
+
+        let photo = [];
+        if (isNightClubCategory(searchItem.categories)) {
+            photo = await loadNightclubPhoto(searchItem.fsq_id);
+        } else if (isBarCategory(searchItem.categories)) {
+            photo = await loadBarPhoto(searchItem.fsq_id);
+        }
+        if (photo.length > 0) {
+            const firstPhoto = photo[0];
+            const imageUrl = `${firstPhoto.prefix}100x100${firstPhoto.suffix}`
+            console.log("Loading image:",searchItem.name, imageUrl);
+            const img = document.createElement('img');
+            img.src = `${firstPhoto.prefix}100x100${firstPhoto.suffix}`;
+            img.alt = 'Photo';
+            img.classList.add('recent-item-image');
+            itemImage.appendChild(img);
+        }
+        else {
+            console.log('No photos available for ' +searchItem.name+ searchItem.fsq_id);
+        }
+    }
 
     function addMarkerToMap(map,r){
         const lat = r.geocodes.main.latitude;
