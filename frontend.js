@@ -8,6 +8,7 @@ document.addEventListener("DOMContentLoaded", async function(){
     const searchContainer = document.getElementById('search-container');
     const mapContainer = document.getElementById('map-container');
     const recentSearchContainer = document.getElementById('recent-search-container')
+    const savedSearchContainer = document.getElementById('saved-search-container')
    
 
 
@@ -39,7 +40,14 @@ document.addEventListener("DOMContentLoaded", async function(){
 
         document.querySelector("#recent-icon").addEventListener('click', function(){
             searchContainer.classList.replace('visible', 'hidden');
+            savedSearchContainer.classList.replace('visible', 'hidden');
             recentSearchContainer.classList.replace('hidden', 'visible');
+        })
+
+        document.querySelector("#saved-icon").addEventListener('click', function(){
+            searchContainer.classList.replace('visible', 'hidden');
+            recentSearchContainer.classList.replace('visible', 'hidden');
+            savedSearchContainer.classList.replace('hidden', 'visible');
         })
 
     }
@@ -72,6 +80,14 @@ document.addEventListener("DOMContentLoaded", async function(){
             nameElement.classList.add("result-name");
             resultElement.appendChild(nameElement);
             
+            const saveButton = document.createElement('i');
+            saveButton.classList.add("fas", "fa-save", "save-icon");
+            saveButton.addEventListener('click', function(event){
+                event.stopPropagation();
+                saveSearchResult(r);
+                displaySavedSearches();
+            })
+            resultElement.appendChild(saveButton);
             searchResultDiv.appendChild(resultElement);
             resultElement.classList.add("result-item");
             resultElement.addEventListener("click", function(){
@@ -83,6 +99,64 @@ document.addEventListener("DOMContentLoaded", async function(){
             }); 
         }
     }
+
+    function saveSearchResult(result) {
+        let savedResults = JSON.parse(localStorage.getItem('savedSearches')) || [];
+        savedResults.push(result);
+        localStorage.setItem('savedSearches', JSON.stringify(savedResults));
+    }
+
+    function displaySavedSearches() {
+        console.log("Displaying saved searches");
+        let savedResults = JSON.parse(localStorage.getItem('savedSearches')) || [];
+        console.log("Saved Results: ", savedResults); 
+        savedSearchContainer.innerHTML = '';
+
+        savedResults.forEach((savedItem) => {
+            console.log("Creating item for: ", savedItem); 
+            const savedDiv = document.createElement('div');
+            savedDiv.className = 'saved-search-item';
+
+            const savedImage = document.createElement('div');
+            savedImage.classList.add('saved-item-image');
+            savedItemImage(savedImage, savedItem)
+
+            const savedName = document.createElement('div');
+            savedName.className = 'saved-item-name';
+            savedName.textContent = savedItem.name;
+            
+            const exitButton = document.createElement('button');
+            exitButton.id = 'close-saved-btn';
+            exitButton.className = 'saved-search-close';
+            exitButton.innerHTML = '&times;';
+            exitButton.onclick = function() {
+                savedSearchContainer.classList.replace('visible', 'hidden');
+                map.invalidateSize();
+            }
+            savedSearchContainer.appendChild(exitButton);
+            savedSearchContainer.appendChild(savedDiv);
+            savedDiv.appendChild(savedImage);
+            savedDiv.appendChild(savedName);
+
+            savedDiv.addEventListener('click', () => {
+                if (savedItem.geocodes && savedItem.geocodes.main) {
+                    const lat = savedItem.geocodes.main.latitude;
+                    const lng = savedItem.geocodes.main.longitude;
+                    const location = L.latLng(lat, lng);
+                    map.flyTo(location, 16);
+
+                    if(savedItem.marker){
+                        savedItem.marker.openPopup(); 
+                    }
+                    
+                }
+                else{
+                    console.error('Invalid location data for search item:', savedItem);
+                }
+            })
+        })
+    }
+
 
     function saveToRecentSearches(result) {
         let recentSearches = JSON.parse(sessionStorage.getItem('recentSearches')) || [];
@@ -109,15 +183,16 @@ document.addEventListener("DOMContentLoaded", async function(){
             const closeButton = document.createElement('button');
             closeButton.id = 'close-recent-btn'
             closeButton.className = 'recent-search-close';
-            closeButton.textContent = '×';
+            closeButton.innerHTML = '&times;';
             closeButton.onclick = function() {
-                itemDiv.remove();
-                recentSearches.forEach(index => {
+                const index = recentSearches.findIndex(item => item === searchItem);
+                if (index !== -1) {
                     recentSearches.splice(index, 1);
-                })
-                sessionStorage.setItem('recentSearches', JSON.stringify(recentSearches));
-                recentSearchContainer.classList.replace('visible', 'hidden');
-                map.invalidateSize();
+                    sessionStorage.setItem('recentSearches', JSON.stringify(recentSearches));
+                    itemDiv.remove();
+                    recentSearchContainer.classList.replace('visible', 'hidden');
+                    map.invalidateSize();
+                }
             };
         
             recentSearchContainer.appendChild(closeButton);
@@ -128,8 +203,20 @@ document.addEventListener("DOMContentLoaded", async function(){
             recentSearchContainer.appendChild(itemDiv);
 
             itemDiv.addEventListener('click', () => {
-                map.flyTo(location, 16);
-                marker.openPopup();
+                if (searchItem.geocodes && searchItem.geocodes.main) {
+                    const lat = searchItem.geocodes.main.latitude;
+                    const lng = searchItem.geocodes.main.longitude;
+                    const location = L.latLng(lat, lng);
+                    map.flyTo(location, 16);
+
+                    if(searchItem.marker){
+                        searchItem.marker.openPopup(); 
+                    }
+                    
+                }
+                else{
+                    console.error('Invalid location data for search item:', searchItem);
+                }
             })
         })
 
@@ -144,8 +231,6 @@ document.addEventListener("DOMContentLoaded", async function(){
         }
         if (photo.length > 0) {
             const firstPhoto = photo[0];
-            const imageUrl = `${firstPhoto.prefix}100x100${firstPhoto.suffix}`
-            console.log("Loading image:",r.name, imageUrl);
             const img = document.createElement('img');
             img.src = `${firstPhoto.prefix}100x100${firstPhoto.suffix}`;
             img.alt = 'Photo';
@@ -154,6 +239,36 @@ document.addEventListener("DOMContentLoaded", async function(){
         }
         else {
             console.log('No photos available for ' +r.name+ r.fsq_id);
+        }
+    }
+
+    async function savedItemImage(savedImage, savedItem) {
+        if (!savedItem || !savedItem.fsq_id || !savedItem.name) {
+            console.error('Invalid search item:', savedItem);
+            return;
+        }
+    
+        try {
+            let photo = [];
+            if (isNightClubCategory(savedItem.categories)) {
+                photo = await loadNightclubPhoto(savedItem.fsq_id);
+            } else if (isBarCategory(savedItem.categories)) {
+                photo = await loadBarPhoto(savedItem.fsq_id);
+            }
+    
+            if (photo.length > 0) {
+                const firstPhoto = photo[0];
+                const imageUrl = `${firstPhoto.prefix}100x100${firstPhoto.suffix}`;
+                const img = document.createElement('img');
+                img.src = imageUrl;
+                img.alt = 'Photo of ' + savedItem.name; // Improved alt text
+                img.classList.add('saved-item-image'); // Assuming 'saved-item-image' is a defined class
+                savedImage.appendChild(img);
+            } else {
+                console.log('No photos available for ' + savedItem.name + ' (' + savedItem.fsq_id + ')');
+            }
+        } catch (error) {
+            console.error('Error loading image for saved item:', savedItem, error);
         }
     }
 
@@ -172,8 +287,6 @@ document.addEventListener("DOMContentLoaded", async function(){
         }
         if (photo.length > 0) {
             const firstPhoto = photo[0];
-            const imageUrl = `${firstPhoto.prefix}100x100${firstPhoto.suffix}`
-            console.log("Loading image:",searchItem.name, imageUrl);
             const img = document.createElement('img');
             img.src = `${firstPhoto.prefix}100x100${firstPhoto.suffix}`;
             img.alt = 'Photo';
