@@ -7,6 +7,7 @@ document.addEventListener("DOMContentLoaded", async function(){
     const barLayer = L.layerGroup().addTo(map);
     const searchContainer = document.getElementById('search-container');
     const mapContainer = document.getElementById('map-container');
+    const recentSearchContainer = document.getElementById('recent-search-container')
    
 
 
@@ -16,6 +17,7 @@ document.addEventListener("DOMContentLoaded", async function(){
         document.querySelector("#search-icon").addEventListener('click', async function(){
             searchContainer.classList.replace('hidden', 'visible');
             mapContainer.classList.replace('full', 'shrink');
+            recentSearchContainer.classList.replace('visible', 'hidden')
             map.invalidateSize();
 
             const searchTerms = document.querySelector("#search-terms").value;
@@ -33,6 +35,11 @@ document.addEventListener("DOMContentLoaded", async function(){
             document.querySelector("#search-terms").value = '';
             nightclubLayer.clearLayers();
             barLayer.clearLayers();
+        })
+
+        document.querySelector("#recent-icon").addEventListener('click', function(){
+            searchContainer.classList.replace('visible', 'hidden');
+            recentSearchContainer.classList.replace('hidden', 'visible');
         })
 
     }
@@ -55,13 +62,14 @@ document.addEventListener("DOMContentLoaded", async function(){
             const location = [lat, lng];
 
             const imageContainer = document.createElement('div');
-            imageContainer.classList.add('image-container');
+            imageContainer.classList.add('result-image');
             resultElement.appendChild(imageContainer);
 
             updateImageContainer(imageContainer, r);
             
             const nameElement = document.createElement('div');
             nameElement.textContent = r.name;
+            nameElement.classList.add("result-name");
             resultElement.appendChild(nameElement);
             
             searchResultDiv.appendChild(resultElement);
@@ -77,27 +85,42 @@ document.addEventListener("DOMContentLoaded", async function(){
     }
 
     function saveToRecentSearches(result) {
-        let recentSearches = JSON.parse(localStorage.getItem('recentSearches')) || [];
+        let recentSearches = JSON.parse(sessionStorage.getItem('recentSearches')) || [];
         recentSearches.push(result);
-        localStorage.setItem('recentSearches', JSON.stringify(recentSearches));
+        sessionStorage.setItem('recentSearches', JSON.stringify(recentSearches));
     }
 
     function displayRecentSearches() {
-        let recentSearches = JSON.parse(localStorage.getItem('recentSearches')) || [];
-        const recentSearchContainer = document.getElementById('recent-search-container')
+        let recentSearches = JSON.parse(sessionStorage.getItem('recentSearches')) || [];
         recentSearchContainer.innerHTML = '';
 
         recentSearches.forEach((searchItem) => {
             const itemDiv = document.createElement('div');
-            itemDiv.className = 'recent-search-image';
+            itemDiv.className = 'recent-search-item';
 
             const itemImage = document.createElement('div');
-            itemImage.classList.add('recent-item-container');
+            itemImage.classList.add('recent-item-image');
             updateItemImage(itemImage, searchItem);
 
             const itemName = document.createElement('div');
             itemName.className = 'recent-search-name';
             itemName.textContent = searchItem.name;
+
+            const closeButton = document.createElement('button');
+            closeButton.id = 'close-recent-btn'
+            closeButton.className = 'recent-search-close';
+            closeButton.textContent = '×';
+            closeButton.onclick = function() {
+                itemDiv.remove();
+                recentSearches.forEach(index => {
+                    recentSearches.splice(index, 1);
+                })
+                sessionStorage.setItem('recentSearches', JSON.stringify(recentSearches));
+                recentSearchContainer.classList.replace('visible', 'hidden');
+                map.invalidateSize();
+            };
+        
+            recentSearchContainer.appendChild(closeButton);
 
             itemDiv.appendChild(itemImage);
             itemDiv.appendChild(itemName);
@@ -109,6 +132,7 @@ document.addEventListener("DOMContentLoaded", async function(){
                 marker.openPopup();
             })
         })
+
     }
 
     async function updateImageContainer(imageContainer, r) {
