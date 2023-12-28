@@ -10,6 +10,25 @@ document.addEventListener("DOMContentLoaded", async function(){
     const recentSearchContainer = document.getElementById('recent-search-container')
     const savedSearchContainer = document.getElementById('saved-search-container')
     let currentUserLocation = { lat: null, lng: null };
+    const userIcon = L.icon({
+        iconUrl: 'icon-image/marker.png', 
+        iconSize: [80, 80], 
+        iconAnchor: [40, 80], 
+        popupAnchor: [0, -80]
+    });
+    const nightclubIcon = L.icon({
+        iconUrl: 'icon-image/nightclub-icon.png',
+        iconSize: [25, 41],
+        iconAnchor: [12, 41],
+        popupAnchor: [0, -41]
+    });
+    
+    const barIcon = L.icon({
+        iconUrl: 'icon-image/bar-icon.png', 
+        iconSize: [25, 41],
+        iconAnchor: [12, 41],
+        popupAnchor: [0, -41]
+    });
 
 
     function getUserLocation() {
@@ -25,7 +44,7 @@ document.addEventListener("DOMContentLoaded", async function(){
         const longitude = position.coords.longitude;
         map.setView([latitude, longitude], 13);
         currentUserLocation = { lat: latitude, lng: longitude };
-        const userLocationMarker = L.marker([latitude, longitude]);
+        const userLocationMarker = L.marker([latitude, longitude], { icon: userIcon });
         userLocationMarker.addTo(map);
     }
 
@@ -360,8 +379,9 @@ document.addEventListener("DOMContentLoaded", async function(){
         const lat = r.geocodes.main.latitude;
         const lng = r.geocodes.main.longitude;
         const coordinate = [lat, lng];
+      
+
         const marker = L.marker(coordinate);
-    
     
         if (isNightClubCategory(r.categories) && isInSG(lat, lng)) {
             marker.addTo(nightclubLayer);
@@ -538,7 +558,7 @@ document.addEventListener("DOMContentLoaded", async function(){
         return lat >= latMin && lat <= latMax && lng >= lngMin && lng <= lngMax;
     }
 
-    async function displayRoute(startLat, startLng, endLat, endLng) {
+    /*async function displayRoute(startLat, startLng, endLat, endLng) {
        try{
             const routeData = await getRouteData(startLat, startLng, endLat, endLng);
             console.log(`Getting route data from ${startLat}, ${startLng} to ${endLat}, ${endLng}`);
@@ -572,5 +592,5 @@ document.addEventListener("DOMContentLoaded", async function(){
         routePolylines.forEach(polyline => map.removeLayer(polyline));
         routePolylines = []
     }
-    displayRoute(1.3656, 103.858, 1.3000, 103.8000); 
+    displayRoute(1.3656, 103.858, 1.3000, 103.8000); */
 });
