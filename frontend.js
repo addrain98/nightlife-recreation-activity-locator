@@ -9,8 +9,47 @@ document.addEventListener("DOMContentLoaded", async function(){
     const mapContainer = document.getElementById('map-container');
     const recentSearchContainer = document.getElementById('recent-search-container')
     const savedSearchContainer = document.getElementById('saved-search-container')
-   
+    let currentUserLocation = { lat: null, lng: null };
 
+
+    function getUserLocation() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(showPosition, showError);
+        } else {
+            console.error("Geolocation is not supported by this browser.")
+        }
+    }
+
+    function showPosition(position) {
+        const latitude = position.coords.latitude;
+        const longitude = position.coords.longitude;
+        map.setView([latitude, longitude], 13);
+        currentUserLocation = { lat: latitude, lng: longitude };
+        const userLocationMarker = L.marker([latitude, longitude]);
+        userLocationMarker.addTo(map);
+    }
+
+    function showError(error) {
+        switch(error.code) {
+            case error.PERMISSION_DENIED:
+                console.error("User denied the request for Geolocation.");
+                break;
+            case error.POSITION_UNAVAILABLE:
+                console.error("Location information is unavailable.");
+                break;
+            case error.TIMEOUT:
+                console.error("The request to get user location timed out.");
+                break;
+            case error.UNKNOWN_ERROR:
+                console.error("An unknown error occurred.");
+                break;
+        }
+    }
+
+    const locateMeButton = document.getElementById('locate-me');
+    locateMeButton.addEventListener('click', function() {
+        getUserLocation();
+    });
 
     setupEventHandlers();
 
@@ -87,6 +126,17 @@ document.addEventListener("DOMContentLoaded", async function(){
                 saveSearchResult(r);
                 displaySavedSearches();
             })
+
+            const directionIcon = document.createElement('i');
+            directionIcon.classList.add('fas', 'fa-directions', 'direction-icon');
+            directionIcon.addEventListener('click', function(event){
+                event.stopPropagation();
+                const userLat = currentUserLocation.lat;
+                const userLng = currentUserLocation.lng;
+                displayRoute(userLat, userLng, lat, lng)
+            });
+
+            resultElement.appendChild(directionIcon);
             resultElement.appendChild(saveButton);
             searchResultDiv.appendChild(resultElement);
             resultElement.classList.add("result-item");
@@ -179,6 +229,14 @@ document.addEventListener("DOMContentLoaded", async function(){
             const itemName = document.createElement('div');
             itemName.className = 'recent-search-name';
             itemName.textContent = searchItem.name;
+
+            const saveButton = document.createElement('i');
+            saveButton.classList.add("fas", "fa-save", "save-icon");
+            saveButton.addEventListener('click', function(event){
+                event.stopPropagation();
+                saveSearchResult(r);
+                displaySavedSearches();
+            })
 
             const closeButton = document.createElement('button');
             closeButton.id = 'close-recent-btn'
@@ -480,4 +538,39 @@ document.addEventListener("DOMContentLoaded", async function(){
         return lat >= latMin && lat <= latMax && lng >= lngMin && lng <= lngMax;
     }
 
+    async function displayRoute(startLat, startLng, endLat, endLng) {
+       try{
+            const routeData = await getRouteData(startLat, startLng, endLat, endLng);
+            console.log(`Getting route data from ${startLat}, ${startLng} to ${endLat}, ${endLng}`);
+            console.log('Route Data:', routeData);
+            if (!Array.isArray(routeData.trips) || routeData.trips.length === 0) {
+                console.error('No trips data found in the response');
+                return;
+            }
+            clearRoutes();
+
+            routeData.trips.forEach((trips, index)=> {
+                const colors = ['blue', 'green', 'pink', 'yellow', 'orange'];
+                const color = colors[index % colors.length];
+
+                trips.segments.forEach(segment => {
+                    const coords = segment.steps.map(step => [step.lat, step.lng]);
+                    const polyline = L.polyline(coords, {color:color});
+                    polyline.addTo(map);
+
+                    routePolylines.push(polyline);
+                })
+            })
+       } catch (error) {
+        console.error('Error displaying routes:', error);
+       }
+    }
+
+    let routePolylines = [];
+
+    function clearRoutes() {
+        routePolylines.forEach(polyline => map.removeLayer(polyline));
+        routePolylines = []
+    }
+    displayRoute(1.3656, 103.858, 1.3000, 103.8000); 
 });
