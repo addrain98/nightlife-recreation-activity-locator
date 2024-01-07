@@ -9,6 +9,9 @@ document.addEventListener("DOMContentLoaded", async function(){
     const mapContainer = document.getElementById('map-container');
     const recentSearchContainer = document.getElementById('recent-search-container')
     const savedSearchContainer = document.getElementById('saved-search-container')
+
+
+
     let currentUserLocation = { lat: null, lng: null };
     const userIcon = L.icon({
         iconUrl: 'icon-image/marker.png', 
@@ -150,9 +153,7 @@ document.addEventListener("DOMContentLoaded", async function(){
             directionIcon.classList.add('fas', 'fa-directions', 'direction-icon');
             directionIcon.addEventListener('click', function(event){
                 event.stopPropagation();
-                const userLat = currentUserLocation.lat;
-                const userLng = currentUserLocation.lng;
-                displayRoute(userLat, userLng, lat, lng)
+                window.location.href = `https://www.google.com/maps/dir/Current+Location/${r.geocodes.main.latitude},${r.geocodes.main.longitude}`;
             });
 
             resultElement.appendChild(directionIcon);
@@ -558,39 +559,7 @@ document.addEventListener("DOMContentLoaded", async function(){
         return lat >= latMin && lat <= latMax && lng >= lngMin && lng <= lngMax;
     }
 
-    /*async function displayRoute(startLat, startLng, endLat, endLng) {
-       try{
-            const routeData = await getRouteData(startLat, startLng, endLat, endLng);
-            console.log(`Getting route data from ${startLat}, ${startLng} to ${endLat}, ${endLng}`);
-            console.log('Route Data:', routeData);
-            if (!Array.isArray(routeData.trips) || routeData.trips.length === 0) {
-                console.error('No trips data found in the response');
-                return;
-            }
-            clearRoutes();
 
-            routeData.trips.forEach((trips, index)=> {
-                const colors = ['blue', 'green', 'pink', 'yellow', 'orange'];
-                const color = colors[index % colors.length];
 
-                trips.segments.forEach(segment => {
-                    const coords = segment.steps.map(step => [step.lat, step.lng]);
-                    const polyline = L.polyline(coords, {color:color});
-                    polyline.addTo(map);
-
-                    routePolylines.push(polyline);
-                })
-            })
-       } catch (error) {
-        console.error('Error displaying routes:', error);
-       }
-    }
-
-    let routePolylines = [];
-
-    function clearRoutes() {
-        routePolylines.forEach(polyline => map.removeLayer(polyline));
-        routePolylines = []
-    }
-    displayRoute(1.3656, 103.858, 1.3000, 103.8000); */
+   
 });
