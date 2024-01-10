@@ -382,7 +382,8 @@ document.addEventListener("DOMContentLoaded", async function(){
         const coordinate = [lat, lng];
       
 
-        const marker = L.marker(coordinate);
+        const marker = L.marker(coordinate, L.icon({icon: {iconUrl: './icon-image/bar-icon.png', 
+                                                     iconSize: [26,26] }}));
     
         if (isNightClubCategory(r.categories) && isInSG(lat, lng)) {
             marker.addTo(nightclubLayer);
