@@ -20,14 +20,14 @@ document.addEventListener("DOMContentLoaded", async function(){
         popupAnchor: [0, -80]
     });
     const nightclubIcon = L.icon({
-        iconUrl: 'icon-image/nightclub-icon.png',
+        iconUrl: './icon-image/nightclub-icon.png',
         iconSize: [25, 41],
         iconAnchor: [12, 41],
         popupAnchor: [0, -41]
     });
     
     const barIcon = L.icon({
-        iconUrl: 'icon-image/bar-icon.png', 
+        iconUrl: './icon-image/bar-icon.png', 
         iconSize: [25, 41],
         iconAnchor: [12, 41],
         popupAnchor: [0, -41]
@@ -381,14 +381,16 @@ document.addEventListener("DOMContentLoaded", async function(){
         const lng = r.geocodes.main.longitude;
         const coordinate = [lat, lng];
       
-
-        const marker = L.marker(coordinate, L.icon({icon: {iconUrl: './icon-image/bar-icon.png', 
-                                                     iconSize: [26,26] }}));
+        const marker = L.marker(coordinate);
+        
+        
     
         if (isNightClubCategory(r.categories) && isInSG(lat, lng)) {
+            marker.setIcon(nightclubIcon);
             marker.addTo(nightclubLayer);
         }
         else if (isBarCategory(r.categories)&& isInSG(lat, lng)) {
+            marker.setIcon(barIcon);
             marker.addTo(barLayer);  
         }
 
