@@ -21,16 +21,16 @@ document.addEventListener("DOMContentLoaded", async function(){
     });
     const nightclubIcon = L.icon({
         iconUrl: './icon-image/nightclub-icon.png',
-        iconSize: [25, 41],
-        iconAnchor: [12, 41],
-        popupAnchor: [0, -41]
+        iconSize: [50, 50],
+        iconAnchor: [12, 50],
+        popupAnchor: [0, -50]
     });
     
     const barIcon = L.icon({
         iconUrl: './icon-image/bar-icon.png', 
-        iconSize: [25, 41],
-        iconAnchor: [12, 41],
-        popupAnchor: [0, -41]
+        iconSize: [50, 50],
+        iconAnchor: [12, 50],
+        popupAnchor: [0, -50]
     });
 
 
@@ -84,7 +84,7 @@ document.addEventListener("DOMContentLoaded", async function(){
 
             const searchTerms = document.querySelector("#search-terms").value;
             const centerOfMap = map.getBounds().getCenter();
-            const nightclubResults = await findNightclubs(searchTerms, centerOfMap.lat, centerOfMap.lng, 10000, categoryIDs);
+            const nightclubResults = await findNightclubs(searchTerms, centerOfMap.lat, centerOfMap.lng, 10000, categoryIDtoString);
             displaySearchResults(nightclubResults, nightclubLayer, 'nightclub');
             const barResults =await findBars(searchTerms, centerOfMap.lat, centerOfMap.lng, 10000, categoryString);
             displaySearchResults(barResults, barLayer, 'bar');
@@ -111,10 +111,34 @@ document.addEventListener("DOMContentLoaded", async function(){
             savedSearchContainer.classList.replace('hidden', 'visible');
         })
 
+
     }
     
+    document.getElementById('find-club').addEventListener('click', function() {
+        toggleNightclubMarkers();
+    });
 
-   
+    document.getElementById('find-bar').addEventListener('click', function() {
+        toggleBarMarkers();
+    });
+
+    function toggleNightclubMarkers() {
+        // Assuming nightclubLayer is a layerGroup that contains all nightclub markers
+        if (map.hasLayer(nightclubLayer)) {
+            map.removeLayer(nightclubLayer);
+        } else {
+            nightclubLayer.addTo(map);
+        }
+    }
+    
+    function toggleBarMarkers() {
+        // Assuming barLayer is a layerGroup that contains all bar markers
+        if (map.hasLayer(barLayer)) {
+            map.removeLayer(barLayer);
+        } else {
+            barLayer.addTo(map);
+        }
+    }
 
     function displaySearchResults(results, layerGroup, type) {
         layerGroup.clearLayers();
@@ -490,43 +514,43 @@ document.addEventListener("DOMContentLoaded", async function(){
         }
 
 
-        marker.bindPopup(function() {
-            const element = document.createElement('div');
-            element.classList.add('carousel-container');
-            const carousel = createCarouselElement(r);
-            console.log(carousel);
-            element.appendChild(carousel); 
-
-
-            const title = document.createElement('h5');
-            title.textContent = r.name;
-            title.classList.add('carousel-title'); 
-            element.appendChild(title);
-
-            const location = document.createElement('p');
-            location.textContent = r.location.formatted_address;
-            location.classList.add('carousel-location'); 
-            element.appendChild(location);
-
-            const openingHours = document.createElement('p');
-            openingHours.textContent = r.closed_bucket;
-            openingHours.classList.add('carousel-opening-hours'); 
-            element.appendChild(openingHours);
-
-            loadPlacesPhoto(carousel, r).then(()=>{
-                let myCarouselElement = element.querySelector(`#carousel${r.fsq_id}`);
-                if (myCarouselElement) {
-                    let carouselInstance = new bootstrap.Carousel(myCarouselElement);
-                    carouselInstance.cycle();
-                } else {
-                    console.error('Carousel element not found');
-                }
-            }).catch(error => {
-                    console.error('Error loading photos:', error); 
-            })
         
-            return element;
-        });
+        const element = document.createElement('div');
+        element.classList.add('carousel-container');
+        const carousel = createCarouselElement(r);
+        console.log(carousel);
+        element.appendChild(carousel); 
+
+
+        const title = document.createElement('h5');
+        title.textContent = r.name;
+        title.classList.add('carousel-title'); 
+        element.appendChild(title);
+
+        const location = document.createElement('p');
+        location.textContent = r.location.formatted_address;
+        location.classList.add('carousel-location'); 
+        element.appendChild(location);
+
+        const openingHours = document.createElement('p');
+        openingHours.textContent = r.closed_bucket;
+        openingHours.classList.add('carousel-opening-hours'); 
+        element.appendChild(openingHours);
+
+        loadPlacesPhoto(carousel, r).then(()=>{
+            let myCarouselElement = element.querySelector(`#carousel${r.fsq_id}`);
+            if (myCarouselElement) {
+                let carouselInstance = new bootstrap.Carousel(myCarouselElement);
+                carouselInstance.cycle();
+            } else {
+                console.error('Carousel element not found');
+            }
+        }).catch(error => {
+                console.error('Error loading photos:', error); 
+        })
+    
+        marker.bindPopup(element, { closePopupOnClick: true });
+        
         
         marker.addEventListener('click', function() {
             map.flyTo(coordinate, 13);

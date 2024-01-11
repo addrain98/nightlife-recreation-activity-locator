@@ -1,7 +1,8 @@
 const NIGHTCLUB_KEY = 'fsq3oup5rBr57qce1vJYCdwbnp2lm1aZ6kWu4DL93TyuG+E='
-const categoryIDs = ["10032", "10034", "10040", "10052"]
+const categoryIDs = [10032, 10034, 10040, 10052]
+const categoryIDtoString = categoryIDs.join(',')
 
-async function findNightclubs(searchTerms, lat, lng, radius = 10000, categoryIDs) {
+async function findNightclubs(searchTerms, lat, lng, radius = 10000, categoryIDtoString) {
 
     const response = await axios.get("https://api.foursquare.com/v3/places/search",{
        
@@ -10,7 +11,7 @@ async function findNightclubs(searchTerms, lat, lng, radius = 10000, categoryIDs
             ll: lat+","+lng, 
             radius: radius,
             limit: 50,
-            category: categoryIDs
+            category: categoryIDtoString
         },
         headers: {
             accept: 'application/json',
