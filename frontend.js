@@ -122,20 +122,33 @@ document.addEventListener("DOMContentLoaded", async function(){
         toggleBarMarkers();
     });
 
-    function toggleNightclubMarkers() {
-        // Assuming nightclubLayer is a layerGroup that contains all nightclub markers
+    async function toggleNightclubMarkers() {
         if (map.hasLayer(nightclubLayer)) {
             map.removeLayer(nightclubLayer);
         } else {
+
+            if (nightclubLayer.getLayers().length === 0) {
+        
+                const centerOfMap = map.getBounds().getCenter();
+                const nightclubResults = await findNightclubs("", centerOfMap.lat, centerOfMap.lng, 10000, categoryIDtoString);
+                displaySearchResults(nightclubResults, nightclubLayer, 'nightclub');
+            }
+
             nightclubLayer.addTo(map);
         }
     }
     
-    function toggleBarMarkers() {
-        // Assuming barLayer is a layerGroup that contains all bar markers
+    
+    
+    async function toggleBarMarkers() {
         if (map.hasLayer(barLayer)) {
             map.removeLayer(barLayer);
         } else {
+            if (barLayer.getLayers().length === 0) {
+                const centerOfMap = map.getBounds().getCenter();
+                const barResults = await findBars("", centerOfMap.lat, centerOfMap.lng, 10000, categoryString);
+                displaySearchResults(barResults, barLayer, 'bar');
+            }
             barLayer.addTo(map);
         }
     }
