@@ -102,13 +102,25 @@ document.addEventListener("DOMContentLoaded", async function(){
         document.querySelector("#recent-icon").addEventListener('click', function(){
             searchContainer.classList.replace('visible', 'hidden');
             savedSearchContainer.classList.replace('visible', 'hidden');
-            recentSearchContainer.classList.replace('hidden', 'visible');
+            if (recentSearchContainer.classList.contains('hidden')){
+                recentSearchContainer.classList.replace('hidden', 'visible');
+            }
+            else {
+                recentSearchContainer.classList.replace('visible', 'hidden');
+            }
         })
 
         document.querySelector("#saved-icon").addEventListener('click', function(){
             searchContainer.classList.replace('visible', 'hidden');
             recentSearchContainer.classList.replace('visible', 'hidden');
-            savedSearchContainer.classList.replace('hidden', 'visible');
+            if (savedSearchContainer.classList.contains('hidden')) {
+               savedSearchContainer.classList.replace('hidden', 'visible'); 
+            }
+
+            else {
+                savedSearchContainer.classList.replace('visible', 'hidden'); 
+            }
+            
         })
 
 
@@ -128,9 +140,9 @@ document.addEventListener("DOMContentLoaded", async function(){
         } else {
 
             if (nightclubLayer.getLayers().length === 0) {
-        
+                const searchTerms = 'nightclub'
                 const centerOfMap = map.getBounds().getCenter();
-                const nightclubResults = await findNightclubs("", centerOfMap.lat, centerOfMap.lng, 10000, categoryIDtoString);
+                const nightclubResults = await findNightclubs(searchTerms, centerOfMap.lat, centerOfMap.lng, 10000, categoryIDtoString);
                 displaySearchResults(nightclubResults, nightclubLayer, 'nightclub');
             }
 
@@ -145,8 +157,9 @@ document.addEventListener("DOMContentLoaded", async function(){
             map.removeLayer(barLayer);
         } else {
             if (barLayer.getLayers().length === 0) {
+                const searchTerms = 'bar'
                 const centerOfMap = map.getBounds().getCenter();
-                const barResults = await findBars("", centerOfMap.lat, centerOfMap.lng, 10000, categoryString);
+                const barResults = await findBars(searchTerms, centerOfMap.lat, centerOfMap.lng, 10000, categoryString);
                 displaySearchResults(barResults, barLayer, 'bar');
             }
             barLayer.addTo(map);
@@ -549,6 +562,7 @@ document.addEventListener("DOMContentLoaded", async function(){
         openingHours.textContent = r.closed_bucket;
         openingHours.classList.add('carousel-opening-hours'); 
         element.appendChild(openingHours);
+
 
         loadPlacesPhoto(carousel, r).then(()=>{
             let myCarouselElement = element.querySelector(`#carousel${r.fsq_id}`);
