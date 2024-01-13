@@ -424,7 +424,7 @@ font-family: 'Orbitron', sans-serif;
 
 
   
-  @media (min-width: 768px) {
+  @media (min-width: 769px) {
     #main {
       display: flex; 
       flex-direction: row-reverse;
