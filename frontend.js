@@ -220,6 +220,7 @@ document.addEventListener("DOMContentLoaded", async function(){
         }
     }
 
+
     function saveSearchResult(result) {
         let savedResults = JSON.parse(localStorage.getItem('savedSearches')) || [];
         savedResults.push(result);
