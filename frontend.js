@@ -1,7 +1,7 @@
 const singapore = [1.3521, 103.8198]
 let coordinate;
 
-document.addEventListener("DOMContentLoaded", async function(){
+document.addEventListener("DOMContentLoaded", async function () {
     const map = initMap();
     const nightclubLayer = L.layerGroup().addTo(map);
     const barLayer = L.layerGroup().addTo(map);
@@ -9,14 +9,15 @@ document.addEventListener("DOMContentLoaded", async function(){
     const mapContainer = document.getElementById('map-container');
     const recentSearchContainer = document.getElementById('recent-search-container')
     const savedSearchContainer = document.getElementById('saved-search-container')
-
+    const landingPage = document.getElementById('landing-page');
+    const getStartedButton = document.getElementById('get-started-icon');
 
 
     let currentUserLocation = { lat: null, lng: null };
     const userIcon = L.icon({
-        iconUrl: 'icon-image/marker.png', 
-        iconSize: [80, 80], 
-        iconAnchor: [40, 80], 
+        iconUrl: 'icon-image/marker.png',
+        iconSize: [80, 80],
+        iconAnchor: [40, 80],
         popupAnchor: [0, -80]
     });
     const nightclubIcon = L.icon({
@@ -25,9 +26,9 @@ document.addEventListener("DOMContentLoaded", async function(){
         iconAnchor: [12, 50],
         popupAnchor: [0, -50]
     });
-    
+
     const barIcon = L.icon({
-        iconUrl: './icon-image/bar-icon.png', 
+        iconUrl: './icon-image/bar-icon.png',
         iconSize: [50, 50],
         iconAnchor: [12, 50],
         popupAnchor: [0, -50]
@@ -69,14 +70,15 @@ document.addEventListener("DOMContentLoaded", async function(){
     }
 
     const locateMeButton = document.getElementById('locate-me');
-    locateMeButton.addEventListener('click', function() {
+    locateMeButton.addEventListener('click', function () {
         getUserLocation();
     });
 
     setupEventHandlers();
 
-    function setupEventHandlers(){
-        document.querySelector("#search-icon").addEventListener('click', async function(){
+    function setupEventHandlers() {
+
+        document.querySelector("#search-icon").addEventListener('click', async function () {
             searchContainer.classList.replace('hidden', 'visible');
             mapContainer.classList.replace('full', 'shrink');
             recentSearchContainer.classList.replace('visible', 'hidden')
@@ -86,12 +88,12 @@ document.addEventListener("DOMContentLoaded", async function(){
             const centerOfMap = map.getBounds().getCenter();
             const nightclubResults = await findNightclubs(searchTerms, centerOfMap.lat, centerOfMap.lng, 10000, categoryIDtoString);
             displaySearchResults(nightclubResults, nightclubLayer, 'nightclub');
-            const barResults =await findBars(searchTerms, centerOfMap.lat, centerOfMap.lng, 10000, categoryString);
+            const barResults = await findBars(searchTerms, centerOfMap.lat, centerOfMap.lng, 10000, categoryString);
             displaySearchResults(barResults, barLayer, 'bar');
         })
 
-        document.querySelector("#close-btn").addEventListener('click',function(){
-            searchContainer.classList.replace('visible','hidden');
+        document.querySelector("#close-btn").addEventListener('click', function () {
+            searchContainer.classList.replace('visible', 'hidden');
             mapContainer.classList.replace('shrink', 'full');
             map.invalidateSize();
             document.querySelector("#search-terms").value = '';
@@ -99,10 +101,10 @@ document.addEventListener("DOMContentLoaded", async function(){
             barLayer.clearLayers();
         })
 
-        document.querySelector("#recent-icon").addEventListener('click', function(){
+        document.querySelector("#recent-icon").addEventListener('click', function () {
             searchContainer.classList.replace('visible', 'hidden');
             savedSearchContainer.classList.replace('visible', 'hidden');
-            if (recentSearchContainer.classList.contains('hidden')){
+            if (recentSearchContainer.classList.contains('hidden')) {
                 recentSearchContainer.classList.replace('hidden', 'visible');
             }
             else {
@@ -110,27 +112,27 @@ document.addEventListener("DOMContentLoaded", async function(){
             }
         })
 
-        document.querySelector("#saved-icon").addEventListener('click', function(){
+        document.querySelector("#saved-icon").addEventListener('click', function () {
             searchContainer.classList.replace('visible', 'hidden');
             recentSearchContainer.classList.replace('visible', 'hidden');
             if (savedSearchContainer.classList.contains('hidden')) {
-               savedSearchContainer.classList.replace('hidden', 'visible'); 
+                savedSearchContainer.classList.replace('hidden', 'visible');
             }
 
             else {
-                savedSearchContainer.classList.replace('visible', 'hidden'); 
+                savedSearchContainer.classList.replace('visible', 'hidden');
             }
-            
+
         })
 
 
     }
-    
-    document.getElementById('find-club').addEventListener('click', function() {
+
+    document.getElementById('find-club').addEventListener('click', function () {
         toggleNightclubMarkers();
     });
 
-    document.getElementById('find-bar').addEventListener('click', function() {
+    document.getElementById('find-bar').addEventListener('click', function () {
         toggleBarMarkers();
     });
 
@@ -149,9 +151,9 @@ document.addEventListener("DOMContentLoaded", async function(){
             nightclubLayer.addTo(map);
         }
     }
-    
-    
-    
+
+
+
     async function toggleBarMarkers() {
         if (map.hasLayer(barLayer)) {
             map.removeLayer(barLayer);
@@ -172,8 +174,8 @@ document.addEventListener("DOMContentLoaded", async function(){
         searchResultDiv.innerHTML = '';
 
         for (let r of results.results) {
-            const marker = addMarkerToMap(map,r,type);
-            marker.addTo(layerGroup);   
+            const marker = addMarkerToMap(map, r, type);
+            marker.addTo(layerGroup);
 
             const resultElement = document.createElement(`div`);
             const lat = r.geocodes.main.latitude;
@@ -185,15 +187,15 @@ document.addEventListener("DOMContentLoaded", async function(){
             resultElement.appendChild(imageContainer);
 
             updateImageContainer(imageContainer, r);
-            
+
             const nameElement = document.createElement('div');
             nameElement.textContent = r.name;
             nameElement.classList.add("result-name");
             resultElement.appendChild(nameElement);
-            
+
             const saveButton = document.createElement('i');
             saveButton.classList.add("fas", "fa-save", "save-icon");
-            saveButton.addEventListener('click', function(event){
+            saveButton.addEventListener('click', function (event) {
                 event.stopPropagation();
                 saveSearchResult(r);
                 displaySavedSearches();
@@ -201,7 +203,7 @@ document.addEventListener("DOMContentLoaded", async function(){
 
             const directionIcon = document.createElement('i');
             directionIcon.classList.add('fas', 'fa-directions', 'direction-icon');
-            directionIcon.addEventListener('click', function(event){
+            directionIcon.addEventListener('click', function (event) {
                 event.stopPropagation();
                 window.location.href = `https://www.google.com/maps/dir/Current+Location/${r.geocodes.main.latitude},${r.geocodes.main.longitude}`;
             });
@@ -210,13 +212,13 @@ document.addEventListener("DOMContentLoaded", async function(){
             resultElement.appendChild(saveButton);
             searchResultDiv.appendChild(resultElement);
             resultElement.classList.add("result-item");
-            resultElement.addEventListener("click", function(){
+            resultElement.addEventListener("click", function () {
                 map.flyTo(location, 16);
                 marker.openPopup();
 
                 saveToRecentSearches(r);
                 displayRecentSearches();
-            }); 
+            });
         }
     }
 
@@ -229,11 +231,11 @@ document.addEventListener("DOMContentLoaded", async function(){
     function displaySavedSearches() {
         console.log("Displaying saved searches");
         let savedResults = JSON.parse(localStorage.getItem('savedSearches')) || [];
-        console.log("Saved Results: ", savedResults); 
+        console.log("Saved Results: ", savedResults);
         savedSearchContainer.innerHTML = '';
 
         savedResults.forEach((savedItem) => {
-            console.log("Creating item for: ", savedItem); 
+            console.log("Creating item for: ", savedItem);
             const savedDiv = document.createElement('div');
             savedDiv.className = 'saved-search-item';
 
@@ -244,12 +246,12 @@ document.addEventListener("DOMContentLoaded", async function(){
             const savedName = document.createElement('div');
             savedName.className = 'saved-item-name';
             savedName.textContent = savedItem.name;
-            
+
             const exitButton = document.createElement('button');
             exitButton.id = 'close-saved-btn';
             exitButton.className = 'saved-search-close';
             exitButton.innerHTML = '&times;';
-            exitButton.onclick = function() {
+            exitButton.onclick = function () {
                 savedSearchContainer.classList.replace('visible', 'hidden');
                 map.invalidateSize();
             }
@@ -265,12 +267,12 @@ document.addEventListener("DOMContentLoaded", async function(){
                     const location = L.latLng(lat, lng);
                     map.flyTo(location, 16);
 
-                    if(savedItem.marker){
-                        savedItem.marker.openPopup(); 
+                    if (savedItem.marker) {
+                        savedItem.marker.openPopup();
                     }
-                    
+
                 }
-                else{
+                else {
                     console.error('Invalid location data for search item:', savedItem);
                 }
             })
@@ -302,7 +304,7 @@ document.addEventListener("DOMContentLoaded", async function(){
 
             const saveButton = document.createElement('i');
             saveButton.classList.add("fas", "fa-save", "save-icon");
-            saveButton.addEventListener('click', function(event){
+            saveButton.addEventListener('click', function (event) {
                 event.stopPropagation();
                 saveSearchResult(r);
                 displaySavedSearches();
@@ -312,7 +314,7 @@ document.addEventListener("DOMContentLoaded", async function(){
             closeButton.id = 'close-recent-btn'
             closeButton.className = 'recent-search-close';
             closeButton.innerHTML = '&times;';
-            closeButton.onclick = function() {
+            closeButton.onclick = function () {
                 const index = recentSearches.findIndex(item => item === searchItem);
                 if (index !== -1) {
                     recentSearches.splice(index, 1);
@@ -322,7 +324,7 @@ document.addEventListener("DOMContentLoaded", async function(){
                     map.invalidateSize();
                 }
             };
-        
+
             recentSearchContainer.appendChild(closeButton);
 
             itemDiv.appendChild(itemImage);
@@ -337,12 +339,12 @@ document.addEventListener("DOMContentLoaded", async function(){
                     const location = L.latLng(lat, lng);
                     map.flyTo(location, 16);
 
-                    if(searchItem.marker){
-                        searchItem.marker.openPopup(); 
+                    if (searchItem.marker) {
+                        searchItem.marker.openPopup();
                     }
-                    
+
                 }
-                else{
+                else {
                     console.error('Invalid location data for search item:', searchItem);
                 }
             })
@@ -366,7 +368,7 @@ document.addEventListener("DOMContentLoaded", async function(){
             imageContainer.appendChild(img);
         }
         else {
-            console.log('No photos available for ' +r.name+ r.fsq_id);
+            console.log('No photos available for ' + r.name + r.fsq_id);
         }
     }
 
@@ -375,7 +377,7 @@ document.addEventListener("DOMContentLoaded", async function(){
             console.error('Invalid search item:', savedItem);
             return;
         }
-    
+
         try {
             let photo = [];
             if (isNightClubCategory(savedItem.categories)) {
@@ -383,7 +385,7 @@ document.addEventListener("DOMContentLoaded", async function(){
             } else if (isBarCategory(savedItem.categories)) {
                 photo = await loadBarPhoto(savedItem.fsq_id);
             }
-    
+
             if (photo.length > 0) {
                 const firstPhoto = photo[0];
                 const imageUrl = `${firstPhoto.prefix}100x100${firstPhoto.suffix}`;
@@ -401,7 +403,7 @@ document.addEventListener("DOMContentLoaded", async function(){
     }
 
     async function updateItemImage(itemImage, searchItem) {
-    
+
         if (!searchItem || !searchItem.fsq_id || !searchItem.name) {
             console.error('Invalid search item:', searchItem);
             return; // Exit the function if the search item is not valid
@@ -422,26 +424,26 @@ document.addEventListener("DOMContentLoaded", async function(){
             itemImage.appendChild(img);
         }
         else {
-            console.log('No photos available for ' +searchItem.name+ searchItem.fsq_id);
+            console.log('No photos available for ' + searchItem.name + searchItem.fsq_id);
         }
     }
 
-    function addMarkerToMap(map,r){
+    function addMarkerToMap(map, r) {
         const lat = r.geocodes.main.latitude;
         const lng = r.geocodes.main.longitude;
         const coordinate = [lat, lng];
-      
+
         const marker = L.marker(coordinate);
-        
-        
-    
+
+
+
         if (isNightClubCategory(r.categories) && isInSG(lat, lng)) {
             marker.setIcon(nightclubIcon);
             marker.addTo(nightclubLayer);
         }
-        else if (isBarCategory(r.categories)&& isInSG(lat, lng)) {
+        else if (isBarCategory(r.categories) && isInSG(lat, lng)) {
             marker.setIcon(barIcon);
-            marker.addTo(barLayer);  
+            marker.addTo(barLayer);
         }
 
         function createCarouselElement(r) {
@@ -458,16 +460,16 @@ document.addEventListener("DOMContentLoaded", async function(){
             prevControl.classList.add('carousel-control-prev');
             prevControl.href = `#carousel${r.fsq_id}`;
             prevControl.setAttribute('role', 'button');
-            prevControl.setAttribute('data-bs-slide', 'prev'); 
+            prevControl.setAttribute('data-bs-slide', 'prev');
             prevControl.innerHTML = '<span class="carousel-control-prev-icon" aria-hidden="true"></span><span class="visually-hidden">Previous</span>';
             carousel.appendChild(prevControl);
 
-            
+
             const nextControl = document.createElement('a');
             nextControl.classList.add('carousel-control-next');
             nextControl.href = `#carousel${r.fsq_id}`;
             nextControl.setAttribute('role', 'button');
-            nextControl.setAttribute('data-bs-slide', 'next'); 
+            nextControl.setAttribute('data-bs-slide', 'next');
             nextControl.innerHTML = '<span class="carousel-control-next-icon" aria-hidden="true"></span><span class="visually-hidden">Next</span>';
             carousel.appendChild(nextControl);
 
@@ -476,7 +478,7 @@ document.addEventListener("DOMContentLoaded", async function(){
 
         async function loadPlacesPhoto(carousel, r) {
             let isFirstItem = true;
-        
+
             const addPhotoToCarousel = (photoUrl, altText) => {
                 const carouselItem = document.createElement('div');
                 carouselItem.classList.add('carousel-item');
@@ -484,26 +486,26 @@ document.addEventListener("DOMContentLoaded", async function(){
                     carouselItem.classList.add('active');
                     isFirstItem = false;
                 }
-        
+
                 const img = document.createElement('img');
                 img.classList.add('d-block', 'w-100');
                 img.src = photoUrl;
                 img.alt = altText;
-        
+
                 carouselItem.appendChild(img);
                 carousel.querySelector('.carousel-inner').appendChild(carouselItem);
             };
-            
+
             if (isNightClubCategory(r.categories) && isInSG(lat, lng)) {
-                
+
                 let responses = await loadNightclubPhoto(r.fsq_id);
-                
-               if (responses.length == 0) {
+
+                if (responses.length == 0) {
                     const noPhotosItem = document.createElement('div');
                     noPhotosItem.classList.add('carousel-item', 'active');
                     const noPhotosText = document.createElement('p');
                     noPhotosText.textContent = 'Photos unavailable';
-                    noPhotosText.classList.add('no-photos-message'); 
+                    noPhotosText.classList.add('no-photos-message');
                     noPhotosItem.appendChild(noPhotosText);
                     carousel.querySelector('.carousel-inner').appendChild(noPhotosItem);
                 }
@@ -514,7 +516,7 @@ document.addEventListener("DOMContentLoaded", async function(){
                         addPhotoToCarousel(photoUrl, 'NightClub Photo', 'The Title of NightClub Photo');
                     });
                 }
-                  
+
             }
             if (isBarCategory(r.categories) && isInSG(lat, lng)) {
                 let responses = await loadBarPhoto(r.fsq_id);
@@ -523,11 +525,11 @@ document.addEventListener("DOMContentLoaded", async function(){
                     noPhotosItem.classList.add('carousel-item', 'active');
                     const noPhotosText = document.createElement('p');
                     noPhotosText.textContent = 'Photos unavailable';
-                    noPhotosText.classList.add('no-photos-message'); 
+                    noPhotosText.classList.add('no-photos-message');
                     noPhotosItem.appendChild(noPhotosText);
                     carousel.querySelector('.carousel-inner').appendChild(noPhotosItem);
                 }
-                else{
+                else {
                     responses.forEach(photo => {
                         console.log("Processing photo:", photo);
                         const photoUrl = `${photo.prefix}400x400${photo.suffix}`;
@@ -535,36 +537,36 @@ document.addEventListener("DOMContentLoaded", async function(){
                     });
                 }
             }
-        return carousel;
-    
+            return carousel;
+
         }
 
 
-        
+
         const element = document.createElement('div');
         element.classList.add('carousel-container');
         const carousel = createCarouselElement(r);
         console.log(carousel);
-        element.appendChild(carousel); 
+        element.appendChild(carousel);
 
 
         const title = document.createElement('h5');
         title.textContent = r.name;
-        title.classList.add('carousel-title'); 
+        title.classList.add('carousel-title');
         element.appendChild(title);
 
         const location = document.createElement('p');
         location.textContent = r.location.formatted_address;
-        location.classList.add('carousel-location'); 
+        location.classList.add('carousel-location');
         element.appendChild(location);
 
         const openingHours = document.createElement('p');
         openingHours.textContent = r.closed_bucket;
-        openingHours.classList.add('carousel-opening-hours'); 
+        openingHours.classList.add('carousel-opening-hours');
         element.appendChild(openingHours);
 
 
-        loadPlacesPhoto(carousel, r).then(()=>{
+        loadPlacesPhoto(carousel, r).then(() => {
             let myCarouselElement = element.querySelector(`#carousel${r.fsq_id}`);
             if (myCarouselElement) {
                 let carouselInstance = new bootstrap.Carousel(myCarouselElement);
@@ -573,35 +575,35 @@ document.addEventListener("DOMContentLoaded", async function(){
                 console.error('Carousel element not found');
             }
         }).catch(error => {
-                console.error('Error loading photos:', error); 
+            console.error('Error loading photos:', error);
         })
-    
+
         marker.bindPopup(element, { closePopupOnClick: true });
-        
-        
-        marker.addEventListener('click', function() {
+
+
+        marker.addEventListener('click', function () {
             map.flyTo(coordinate, 13);
         });
-        
-        return marker;  
+
+        return marker;
     }
 
     function isNightClubCategory(categories) {
         for (let i = 0; i < categories.length; i++) {
             if (categories[i].id === 10032) {
-                return true; 
+                return true;
             }
         }
-        return false; 
+        return false;
     }
 
     function isBarCategory(categories) {
         for (let i = 0; i < categories.length; i++) {
             if (categories[i].id >= 13003 && categories[i].id <= 13025) {
-                return true; 
+                return true;
             }
         }
-        return false; 
+        return false;
     }
 
     function isInSG(lat, lng) {
@@ -609,11 +611,21 @@ document.addEventListener("DOMContentLoaded", async function(){
         const latMax = 1.47;
         const lngMin = 103.6;
         const lngMax = 104.0;
-    
+
         return lat >= latMin && lat <= latMax && lng >= lngMin && lng <= lngMax;
     }
 
 
+    getStartedButton.addEventListener('click', async function () {
+        landingPage.classList.add('fade-out');
+        setTimeout(() => {
+            landingPage.style.display = 'none'; // Hide landing page after fade-out
+            mapContainer.style.display = 'block'; // Show map container
+            map.invalidateSize()
+        }, 1500)
 
-   
+        toggleBarMarkers();
+        getUserLocation();
+    });
+
 });

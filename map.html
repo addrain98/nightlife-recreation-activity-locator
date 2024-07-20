@@ -6,33 +6,42 @@
   <meta name="viewport" content="width=device-width">
   <title>Tien hei hei</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-  integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-  crossorigin=""/>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&display=swap" rel="stylesheet">
   <link href="style.css" rel="stylesheet" type="text/css" />
 </head>
+
 <body>
+  <div id="landing-page" class="landing-page">
+    <div class="container text-center">
+      <h1 class="welcome">Welcome to Tien hei hei</h1>
+      <p class="lead">Discover the best bars and nightclubs in your area.</p>
+      <button id="get-started-icon" class="btn-lg" >Get Started</button>
+    </div>
+  </div>
   <div id="main">
-    <div id ="map-container" class="full">
-        <div id="map">
-          <div id="control-pane">
-            <button id = "toggle-button" class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#container-fluid" aria-expanded="false" aria-controls="container-fluid">
-              <i class="fa-solid fa-bars"></i>
-            </button>
-            <div id="search-box">
-              <input type="text" id="search-terms"/>
-              <i class="fas fa-search" id="search-icon"></i>
-            </div>
-            <button id='find-bar' class="map-button">Bars</button>
-            <button id='find-club' class="map-button">Nightclubs</button>
-            
-          </div>
-          <button id="locate-me" title="Find My Location">
-            <i class="fas fa-location-arrow" id="arrow"></i> 
+    <div id="map-container" class="full">
+      <div id="map">
+        <div id="control-pane">
+          <button id="toggle-button" class="btn btn-primary" type="button" data-bs-toggle="collapse"
+            data-bs-target="#container-fluid" aria-expanded="false" aria-controls="container-fluid">
+            <i class="fa-solid fa-bars"></i>
           </button>
+          <div id="search-box">
+            <input type="text" id="search-terms" />
+            <i class="fas fa-search" id="search-icon"></i>
           </div>
+          <button id='find-bar' class="map-button">Bars</button>
+          <button id='find-club' class="map-button">Nightclubs</button>
+
+        </div>
+        <button id="locate-me" title="Find My Location">
+          <i class="fas fa-location-arrow" id="arrow"></i>
+        </button>
+      </div>
     </div>
     <div id="search-container" class="hidden">
       <button id="close-btn" class="close-button">&times;</button>
@@ -50,18 +59,19 @@
         <div>Saved</div>
       </div>
     </div>
-    
-    
-    
+
+
+
   </div>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-    crossorigin=""></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.6.1/axios.min.js" integrity="sha512-m9S8W3a9hhBHPFAbEIaG7J9P92dzcAWwM42VvJp5n1/M599ldK6Z2st2SfJGsX0QR4LfCVr681vyU5vW8d218w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.6.1/axios.min.js"
+    integrity="sha512-m9S8W3a9hhBHPFAbEIaG7J9P92dzcAWwM42VvJp5n1/M599ldK6Z2st2SfJGsX0QR4LfCVr681vyU5vW8d218w=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <script src="bar_data.js"></script>
   <script src="nightclub_data.js"></script>
   <script src="map.js"></script>
   <script src="frontend.js"></script>
-  
+
 </body>
