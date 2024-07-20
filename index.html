@@ -15,14 +15,14 @@
 </head>
 
 <body>
-  <div id="landing-page" class="landing-page">
-    <div class="container text-center">
-      <h1 class="welcome">Welcome to Tien Hei Hei</h1>
-      <p class="lead">Discover the best bars and nightclubs in your area.</p>
-      <button id="get-started-icon" class="btn-lg" >Get Started</button>
-    </div>
-  </div>
   <div id="main">
+    <div id="landing-page" class="landing-page">
+      <div class="container text-center">
+        <h1 class="welcome">Welcome to Tien Hei Hei</h1>
+        <p class="lead">Discover the best bars and nightclubs in your area.</p>
+        <button id="get-started-icon" class="btn-lg">Get Started</button>
+      </div>
+    </div>
     <div id="map-container" class="full">
       <div id="map">
         <div id="control-pane">
@@ -49,14 +49,16 @@
     </div>
     <div id="recent-search-container" class="hidden"></div>
     <div id="saved-search-container" class="hidden"></div>
-    <div id="container-fluid" class="collapse">
-      <div class="icon-text" id="recent-icon">
-        <i class="fas fa-history"></i>
-        <div id="recent-search">Recent</div>
-      </div>
-      <div class="icon-text">
-        <i class="fas fa-save" id="saved-icon"></i>
-        <div>Saved</div>
+    <div id="hidden-container">
+      <div id="container-fluid" class="collapse">
+        <div class="icon-text" id="recent-icon">
+          <i class="fas fa-history"></i>
+          <div id="recent-search">Recent</div>
+        </div>
+        <div class="icon-text">
+          <i class="fas fa-save" id="saved-icon"></i>
+          <div>Saved</div>
+        </div>
       </div>
     </div>
 

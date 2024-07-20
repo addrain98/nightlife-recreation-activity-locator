@@ -23,6 +23,7 @@ body {
   color: #00FF00;
   /* Neon green text */
   font-family: 'Orbitron', sans-serif;
+  z-index: 1;
 }
 
 .landing-page .container {
@@ -201,15 +202,6 @@ body {
   height: 100%;
 }
 
-#container-fluid {
-  display: none;
-  position: relative;
-  text-align: left;
-  /* Center all inline-block elements */
-  padding: 5px;
-  background-color: #000;
-  border: 1px solid #00FFFF;
-}
 
 .icon-text {
   text-align: center;
@@ -338,6 +330,7 @@ body {
   /* Neon green icon */
   text-shadow: 0 0 5px #00FF00;
 }
+
 
 .save-icon:hover,
 .direction-icon:hover {
@@ -549,12 +542,17 @@ body {
     display: none;
   }
 
+  #hidden-container {
+    display: none
+  }
+
   #container-fluid {
     position: relative;
     display: flex;
     flex-direction: column;
     padding: 5px;
     background-color: #000;
+    text-align: left;
     border: 1px solid #00FFFF;
     height: 100vh;
   }

@@ -11,7 +11,8 @@ document.addEventListener("DOMContentLoaded", async function () {
     const savedSearchContainer = document.getElementById('saved-search-container')
     const landingPage = document.getElementById('landing-page');
     const getStartedButton = document.getElementById('get-started-icon');
-    const containerFluid = document.getElementById('container-fluid');
+    const containerHidden = document.getElementById('hidden-container')
+  
 
 
     let currentUserLocation = { lat: null, lng: null };
@@ -624,7 +625,7 @@ document.addEventListener("DOMContentLoaded", async function () {
             mapContainer.style.display = 'block'; // Show map container
             recentSearchContainer.style.display = 'block'; // Show recent search container
             savedSearchContainer.style.display = 'block'; // Show saved search container
-            containerFluid.style.display = 'block';
+            containerHidden.style.display = 'block'
             map.invalidateSize()
         }, 1500)
 
