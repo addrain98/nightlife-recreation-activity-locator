@@ -621,6 +621,8 @@ document.addEventListener("DOMContentLoaded", async function () {
         setTimeout(() => {
             landingPage.style.display = 'none'; // Hide landing page after fade-out
             mapContainer.style.display = 'block'; // Show map container
+            recentSearchContainer.style.display = 'block'; // Show recent search container
+            savedSearchContainer.style.display = 'block'; // Show saved search container
             map.invalidateSize()
         }, 1500)
 
