@@ -10,8 +10,9 @@ document.addEventListener("DOMContentLoaded", async function () {
     const recentSearchContainer = document.getElementById('recent-search-container')
     const savedSearchContainer = document.getElementById('saved-search-container')
     const landingPage = document.getElementById('landing-page');
+    const hiddenContainer = document.getElementById('hidden-container')
     const getStartedButton = document.getElementById('get-started-icon');
-    const containerHidden = document.getElementById('hidden-container')
+
   
 
 
@@ -623,9 +624,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         setTimeout(() => {
             landingPage.style.display = 'none'; // Hide landing page after fade-out
             mapContainer.style.display = 'block'; // Show map container
-            recentSearchContainer.style.display = 'block'; // Show recent search container
-            savedSearchContainer.style.display = 'block'; // Show saved search container
-            containerHidden.style.display = 'block'
+            hiddenContainer.style.display = 'block'
             map.invalidateSize()
         }, 1500)
 
